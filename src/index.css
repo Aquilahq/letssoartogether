@@ -50,6 +50,26 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+.site-shell {
+  overscroll-behavior-y: none;
+}
+
+@media (min-width: 768px) {
+  .site-shell {
+    scroll-snap-type: y proximity;
+  }
+
+  .site-shell > section {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -62,6 +82,20 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

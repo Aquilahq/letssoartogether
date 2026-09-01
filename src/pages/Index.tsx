@@ -9,7 +9,7 @@ import heroImage from "@/assets/hero-bg-panorama.jpg";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="site-shell min-h-screen bg-background text-foreground">
       <Navbar />
       <Hero heroImage={heroImage} />
       <Brands />
