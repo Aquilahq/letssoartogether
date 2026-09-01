@@ -16,10 +16,10 @@ const Hero = ({ heroImage }: HeroProps) => (
         transition={{ duration: 94, ease: "linear", repeat: Infinity, repeatType: "loop", repeatDelay: 0 }}
         className="absolute inset-y-0 left-0 flex h-full w-[200%] scale-[1.12] origin-center"
       >
-        <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-60" />
-        <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-60" />
+        <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-80" />
+        <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-80" />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/60 to-background" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/45 to-background/90" />
     </div>
 
     <div className="relative z-10 container mx-auto px-6 md:px-12 py-20">

@@ -29,7 +29,7 @@ const aquilaBrands = [
 ];
 
 const Brands = () => (
-  <section id="brands" className="py-28">
+  <section id="about" className="py-28">
     <div className="container mx-auto px-6 md:px-12">
       <motion.p
         initial={{ opacity: 0 }}

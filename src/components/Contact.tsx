@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 
 const Contact = () => (
   <section id="contact" className="py-28 bg-secondary/30">
@@ -28,11 +28,11 @@ const Contact = () => (
           transition={{ delay: 0.1 }}
           className="text-muted-foreground font-body text-lg mb-10 max-w-xl mx-auto"
         >
-          Tell us about your project and we'll get back to you within 24 hours.
+          Tell us what you’re building, launching, or changing. We’ll help turn the idea into momentum.
         </motion.p>
 
         <motion.a
-          href="mailto:hello@prismstudio.com"
+          href="mailto:hello@letssoartogether.com"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
