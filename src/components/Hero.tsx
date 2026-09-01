@@ -47,14 +47,31 @@ const Hero = ({ heroImage }: HeroProps) => (
       </motion.p>
 
       <motion.h1
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.1 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.45, delay: 0.1 }}
         className="font-display text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.95] tracking-tight max-w-5xl"
       >
-        Let's Soar
-        <br />
-        <span className="text-gradient">Together</span>.
+        <span className="block overflow-hidden">
+          <motion.span
+            initial={{ y: "105%" }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+            className="block"
+          >
+            Let's Soar
+          </motion.span>
+        </span>
+        <span className="block overflow-hidden">
+          <motion.span
+            initial={{ y: "105%" }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.28 }}
+            className="block text-gradient"
+          >
+            Together.
+          </motion.span>
+        </span>
       </motion.h1>
 
       <motion.p
