@@ -38,9 +38,9 @@ const Hero = ({ heroImage }: HeroProps) => (
         style={{ WebkitMaskImage: "radial-gradient(ellipse 72% 72% at center, black 54%, transparent 100%)", maskImage: "radial-gradient(ellipse 72% 72% at center, black 54%, transparent 100%)" }}
       />
       <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        initial={{ opacity: 0, x: -42 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
         className="text-primary font-body text-sm tracking-[0.3em] uppercase mb-6"
       >
         Public Relations &amp; Creative Studio
