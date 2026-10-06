@@ -1,110 +1,53 @@
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Sparkles, Wand2 } from "lucide-react";
 import aquilaLogo from "@/assets/aquila-logo.jpg";
 
-interface HeroProps {
-  heroImage: string;
-}
+interface HeroProps { heroImage: string }
 
-const Hero = ({ heroImage }: HeroProps) => (
-  <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-    {/* Cloud background */}
-    <div className="absolute inset-0 z-0">
-      <motion.div
-        aria-hidden="true"
-        animate={{ x: ["-50%", "0%"] }}
-        transition={{ duration: 94, ease: "linear", repeat: Infinity, repeatType: "loop", repeatDelay: 0 }}
-        className="absolute inset-y-0 left-0 flex h-full w-[200%] scale-[1.12] origin-center"
-      >
+const taglines = [
+  "Your business breakthrough starts here.",
+  "Start your business. Start your next chapter.",
+  "Make your dreams impossible to ignore.",
+  "The future you imagine begins today.",
+  "Move forward with the goals that matter.",
+  "Turn your vision into something people remember.",
+  "The change your business needs starts here.",
+  "Bring your idea to life—and let it soar.",
+  "Build the brand your ambition deserves.",
+  "This is where possibility becomes momentum.",
+];
+
+const Hero = ({ heroImage }: HeroProps) => {
+  const [tagline, setTagline] = useState(() => taglines[Math.floor(Math.random() * taglines.length)]);
+  useEffect(() => {
+    const timer = window.setInterval(() => setTagline((current) => {
+      const next = taglines[(taglines.indexOf(current) + 1) % taglines.length];
+      return next;
+    }), 18000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return <section className="relative flex min-h-[88vh] items-center overflow-hidden pt-24">
+    <div className="absolute inset-0 z-0" aria-hidden="true">
+      <motion.div animate={{ x: ["-50%", "0%"] }} transition={{ duration: 94, ease: "linear", repeat: Infinity }} className="absolute inset-y-0 left-0 flex h-full w-[200%] origin-center scale-[1.12]">
         <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-80" />
         <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-80" />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/45 to-background/90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/55 to-background" />
     </div>
 
-    <div className="relative z-10 container mx-auto px-6 md:px-12 py-20">
-      <motion.img
-        src={aquilaLogo}
-        alt="AQUILA emblem drifting through the clouds"
-        initial={{ opacity: 0, x: 40 }}
-        animate={{
-          opacity: [0.2, 0.28, 0.23, 0.3, 0.2],
-          x: [0, 14, 28, 10, 0],
-          y: [0, -10, 4, -7, 0],
-          rotate: [0, 1.2, -0.8, 0.7, 0],
-        }}
-        transition={{ duration: 18, ease: "easeInOut", repeat: Infinity, delay: 0.25 }}
-        className="pointer-events-none absolute right-0 top-8 hidden w-[min(32vw,26.5rem)] grayscale contrast-125 mix-blend-multiply blur-[0.2px] drop-shadow-[0_5px_10px_rgba(23,59,114,0.45)] md:block lg:top-0"
-        style={{ WebkitMaskImage: "radial-gradient(ellipse 72% 72% at center, black 54%, transparent 100%)", maskImage: "radial-gradient(ellipse 72% 72% at center, black 54%, transparent 100%)" }}
-      />
-      <motion.p
-        initial={{ opacity: 0, x: -42 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-        className="text-primary font-body text-sm tracking-[0.3em] uppercase mb-6"
-      >
-        Public Relations &amp; Creative Studio
-      </motion.p>
-
-      <motion.h1
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.45, delay: 0.1 }}
-        className="font-display text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[0.95] tracking-tight max-w-5xl"
-      >
-        <span className="block overflow-hidden">
-          <motion.span
-            initial={{ y: "105%" }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
-            className="block"
-          >
-            Let's Soar
-          </motion.span>
-        </span>
-        <span className="block overflow-hidden">
-          <motion.span
-            initial={{ y: "105%" }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.28 }}
-            className="block text-gradient"
-          >
-            Together.
-          </motion.span>
-        </span>
-      </motion.h1>
-
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
-        className="mt-8 text-muted-foreground font-body text-lg md:text-xl max-w-xl leading-relaxed"
-      >
-        Strategic PR, striking design, and unforgettable branding — 
-        we help organizations get the exposure they deserve.
-      </motion.p>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="mt-10 flex flex-wrap gap-4"
-      >
-        <a
-          href="#contact"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body font-semibold rounded-full hover:opacity-90 transition-opacity"
-        >
-          Start a Project <ArrowRight className="w-5 h-5" />
-        </a>
-        <a
-          href="#work"
-          className="inline-flex items-center gap-2 px-8 py-4 border border-primary/30 text-foreground font-body font-medium rounded-full hover:border-primary/60 transition-colors"
-        >
-          View Our Work
-        </a>
-      </motion.div>
+    <div className="container relative z-10 mx-auto px-6 py-20 md:px-12 md:py-28">
+      <motion.img src={aquilaLogo} alt="AQUILA eagle emblem drifting through the clouds" initial={{ opacity: 0, x: 40 }} animate={{ opacity: [0.1, 0.16, 0.12, 0.18, 0.1], x: [0, 14, 28, 10, 0], y: [0, -10, 4, -7, 0], rotate: [0, 1.2, -0.8, 0.7, 0] }} transition={{ duration: 18, ease: "easeInOut", repeat: Infinity, delay: 0.25 }} className="hidden" style={{ clipPath: "inset(0 0 30% 0)", WebkitMaskImage: "radial-gradient(ellipse 72% 72% at center, black 48%, transparent 100%)", maskImage: "radial-gradient(ellipse 72% 72% at center, black 48%, transparent 100%)" }} />
+      <div className="max-w-4xl">
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="mb-7 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-background/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary backdrop-blur"><Sparkles className="h-4 w-4" /> PR, brand &amp; creative strategy</motion.div>
+        <div className="min-h-[9.5rem] overflow-hidden md:min-h-[10.5rem]"><AnimatePresence mode="wait"><motion.h1 key={tagline} initial={{ opacity: 0, y: 22, scale: 0.985, filter: "blur(10px)", letterSpacing: "0.015em" }} animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)", letterSpacing: "-0.02em" }} exit={{ opacity: 0, y: -18, scale: 1.012, filter: "blur(7px)", letterSpacing: "0.01em" }} transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1] }} className="max-w-4xl will-change-transform font-display text-5xl font-bold leading-[0.98] tracking-tight text-slate-950 md:text-7xl lg:text-8xl">{tagline}</motion.h1></AnimatePresence></div>
+        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-8 max-w-2xl text-lg leading-relaxed text-slate-800 md:text-xl">Every breakthrough begins with a decision: this is the moment things change. We partner with businesses, brands, and big ideas ready to become clearer, stronger, and impossible to overlook.</motion.p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-10 flex flex-col gap-4 sm:flex-row"><a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5">Begin your next chapter <ArrowRight className="h-5 w-5" /></a><a href="#project-notebook" className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/30 bg-background/60 px-7 py-4 font-semibold backdrop-blur transition-colors hover:bg-primary/10"><Wand2 className="h-5 w-5 text-primary" /> Bring us your vision</a></motion.div>
+        <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 text-sm text-slate-800"><span>✦ For businesses in the messy middle</span><span>✦ Practical, partner-led strategy</span><span>✦ We help ideas get airborne</span></div>
+      </div>
     </div>
-  </section>
-);
+  </section>;
+};
 
 export default Hero;
