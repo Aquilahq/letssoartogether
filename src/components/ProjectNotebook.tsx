@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowLeft, ArrowRight, Bookmark, Check, ChevronDown, Copy, Lightbulb,
-  Mail, Menu, Pencil, Plus, Send, Sparkles, Star, Trash2, X
+  ArrowLeft, ArrowRight, Bookmark, Check, Copy, Lightbulb,
+  Mail, Menu, Minimize2, Pencil, Plus, Send, Sparkles, Star, Trash2, X
 } from "lucide-react";
 
 type Idea = { id: number; title: string; text: string; category: string; favorite: boolean };
@@ -47,8 +47,18 @@ const ProjectNotebook = () => {
   const [showContact, setShowContact] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [isImmersive, setIsImmersive] = useState(false);
   const notebookRef = useRef<HTMLElement>(null);
 
+  useEffect(() => {
+    const open = () => { setIsImmersive(true); setIsRevealed(true); };
+    window.addEventListener("open-vision-lab", open);
+    return () => window.removeEventListener("open-vision-lab", open);
+  }, []);
+  useEffect(() => {
+    document.body.classList.toggle("vision-lab-open", isImmersive);
+    return () => document.body.classList.remove("vision-lab-open");
+  }, [isImmersive]);
   useEffect(() => {
     const node = notebookRef.current;
     if (!node || typeof IntersectionObserver === "undefined") { setIsRevealed(true); return; }
@@ -72,11 +82,11 @@ const ProjectNotebook = () => {
   const updateIdea = (id: number, patch: Partial<Idea>) => update("ideas", book.ideas.map((idea) => idea.id === id ? { ...idea, ...patch } : idea));
 
   const pageTitle = pages.find((item) => item.id === page)?.label;
-  return <section ref={notebookRef} id="project-notebook" className={`creative-notebook ${isRevealed ? "is-revealed" : ""}`}>
+  return <section ref={notebookRef} id="project-notebook" className={`creative-notebook ${isRevealed ? "is-revealed" : ""} ${isImmersive ? "is-immersive" : ""}`}>
     <div className="notebook-wrap">
       <header className="notebook-header">
         <div className="notebook-brand"><span className="notebook-mark"><BookIcon /></span><div><span className="eyebrow">Project Notebook</span><strong>Your ideas, in progress.</strong></div></div>
-        <div className="notebook-status"><span className={`save-dot ${saved ? "is-saving" : ""}`} /> {saved ? "Saved privately" : "Saved on this device"} <button className="notebook-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open notebook pages"><Menu size={18} /></button></div>
+        <div className="notebook-status"><span className={`save-dot ${saved ? "is-saving" : ""}`} /> {saved ? "Saved privately" : "Saved on this device"} <button className="immersive-close" onClick={() => setIsImmersive(false)} aria-label="Close Vision Lab"><Minimize2 size={17} /><span>Exit Vision Lab</span></button><button className="notebook-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open notebook pages"><Menu size={18} /></button></div>
       </header>
       {menuOpen && <nav className="notebook-menu-panel">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : ""} onClick={() => go(item.id)}><span>{String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}</nav>}
       <div className="notebook-progress"><div style={{ width: `${Math.max(8, ((pageIndex + 1) / pages.length) * 100)}%` }} /></div>
