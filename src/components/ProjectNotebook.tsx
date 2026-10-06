@@ -78,7 +78,10 @@ const ProjectNotebook = () => {
   const toggleRoadblock = (item: string) => update("roadblocks", book.roadblocks.includes(item) ? book.roadblocks.filter((x) => x !== item) : [...book.roadblocks, item]);
   const toggleStyle = (item: string) => update("styles", book.styles.includes(item) ? book.styles.filter((x) => x !== item) : [...book.styles, item]);
   const toggleIdea = (id: number) => update("selected", book.selected.includes(id) ? book.selected.filter((x) => x !== id) : [...book.selected, id]);
-  const stuck = () => { setPrompt(prompts[Math.floor(Math.random() * prompts.length)]); if (!prompt) return; };
+  const stuck = () => {
+    setPrompt(prompts[Math.floor(Math.random() * prompts.length)]);
+    if (page !== "dump") go("dump");
+  };
   const updateIdea = (id: number, patch: Partial<Idea>) => update("ideas", book.ideas.map((idea) => idea.id === id ? { ...idea, ...patch } : idea));
 
   const pageTitle = pages.find((item) => item.id === page)?.label;
