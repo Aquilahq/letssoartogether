@@ -18,7 +18,7 @@ const Navbar = () => {
     close();
     if (link.label === "Vision Lab") {
       event.preventDefault();
-      window.dispatchEvent(new Event("open-vision-lab"));
+      window.location.assign("/vision-lab");
     }
   };
   return <>

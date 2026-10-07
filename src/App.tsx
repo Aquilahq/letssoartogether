@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import LaunchGate from "./components/LaunchGate";
+import ProjectNotebook from "./components/ProjectNotebook";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +17,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<LaunchGate><Index /></LaunchGate>} />
+          <Route path="/vision-lab" element={<ProjectNotebook standalone />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

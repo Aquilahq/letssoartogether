@@ -38,7 +38,7 @@ const roadblocks = ["I don't know where to start", "Money", "Technology", "Time"
 const categories = ["Love this", "Explore this", "Question", "Problem", "Opportunity", "Needs research", "Later"];
 const key = "lets-soar-creative-notebook";
 
-const ProjectNotebook = () => {
+const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
   const [page, setPage] = useState("start");
   const [book, setBook] = useState<Notebook>(freshNotebook);
   const [draftIdea, setDraftIdea] = useState("");
@@ -85,11 +85,11 @@ const ProjectNotebook = () => {
   const updateIdea = (id: number, patch: Partial<Idea>) => update("ideas", book.ideas.map((idea) => idea.id === id ? { ...idea, ...patch } : idea));
 
   const pageTitle = pages.find((item) => item.id === page)?.label;
-  return <section ref={notebookRef} id="project-notebook" className={`creative-notebook ${isRevealed ? "is-revealed" : ""} ${isImmersive ? "is-immersive" : ""}`}>
+  return <section ref={notebookRef} id="project-notebook" className={`creative-notebook ${standalone ? "standalone" : ""} ${isRevealed ? "is-revealed" : ""} ${isImmersive ? "is-immersive" : ""}`}>
     <div className="notebook-wrap">
       <header className="notebook-header">
-        <div className="notebook-brand"><span className="notebook-mark"><BookIcon /></span><div><span className="eyebrow">Project Notebook</span><strong>Your ideas, in progress.</strong></div></div>
-        <div className="notebook-status"><span className={`save-dot ${saved ? "is-saving" : ""}`} /> {saved ? "Saved privately" : "Saved on this device"} <button className="immersive-close" onClick={() => setIsImmersive(false)} aria-label="Close Vision Lab"><Minimize2 size={17} /><span>Exit Vision Lab</span></button><button className="notebook-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open notebook pages"><Menu size={18} /></button></div>
+        <div className="notebook-brand"><span className="notebook-mark"><BookIcon /></span><div><span className="eyebrow">Vision Lab · Project Notebook</span><strong>Your ideas, in progress.</strong></div></div>
+        <div className="notebook-status">{standalone && <a className="return-to-site" href="/">← Back to site</a>}<span className={`save-dot ${saved ? "is-saving" : ""}`} /> {saved ? "Saved privately" : "Saved on this device"} <button className="immersive-close" onClick={() => setIsImmersive(false)} aria-label="Close Vision Lab"><Minimize2 size={17} /><span>Exit Vision Lab</span></button><button className="notebook-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open notebook pages"><Menu size={18} /></button></div>
       </header>
       {menuOpen && <nav className="notebook-menu-panel">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : ""} onClick={() => go(item.id)}><span>{String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}</nav>}
       <div className="notebook-progress"><div style={{ width: `${Math.max(8, ((pageIndex + 1) / pages.length) * 100)}%` }} /></div>
