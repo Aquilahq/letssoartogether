@@ -11,6 +11,7 @@ const projects: Array<{ title: string; category: string; color: string; image?: 
   { title: "Filthy to Flawless", category: "Branding Idea · Website showcase", color: "from-cyan-100/70 to-primary/15", image: "/filthy-to-flawless-showcase.png", href: "https://filthytoflawless.com" },
   { title: "The Lion Prophecy", category: "Coming Soon · Book by Albert Zaiser", color: "from-amber-100/60 to-orange-200/50", image: "/lion-prophecy-preview.jpg", comingSoon: true },
   { title: "Logos for Businesses", category: "Business identity · Since 1995", color: "from-primary/20 to-primary/5", image: "/logos/logo-showcase-preview.jpg", lightboxImage: "/logos/logo-archive.jpg", featured: true },
+  { title: "Agape Dance Movement", category: "Dance · Movement & expression", color: "from-fuchsia-100/70 to-primary/15" },
   { title: "Horizon Tech Launch", category: "Coming Soon", color: "from-primary/10 to-primary/20", comingSoon: true },
   { title: "HUMAT", category: "Walmart Winner of the Year · Community platform", color: "from-emerald-100/60 to-primary/15", image: "/humat-preview.jpg", comingSoon: true },
 ];
