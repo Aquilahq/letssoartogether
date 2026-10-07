@@ -1,4 +1,4 @@
-interface Env { NDA_BUCKET?: { get: (key: string) => Promise<{ body: ReadableStream; httpEtag?: string; httpMetadata?: { contentType?: string; cacheControl?: string } } | null>; NDA_SESSION_SECRET?: string; }
+interface Env { NDA_BUCKET?: any; NDA_SESSION_SECRET?: string; }
 const objectKey = "aquila-collaboration-nda-v1.pdf";
 const decode = (value: string) => { const normalized = value.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((value.length + 3) % 4); const binary = atob(normalized); return Uint8Array.from(binary, (char) => char.charCodeAt(0)); };
 const verify = async (value: string, secret: string) => crypto.subtle.verify("HMAC", await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]), decode(value), new TextEncoder().encode(value));
