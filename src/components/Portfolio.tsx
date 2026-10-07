@@ -4,7 +4,7 @@ import { ArrowUpRight, Maximize2, X } from "lucide-react";
 
 const projects = [
   { title: "One of a Kind Designz", category: "E-commerce · Brand experience", color: "from-rose-200/70 via-orange-100/50 to-violet-100/70", image: "/one-of-a-kind-designz.png", href: "https://1ofakinddesignz.com" },
-  { title: "Put Down the Guns", category: "Mobile site · Terry C. Carney Sr. & Ice-T", color: "from-amber-100/60 to-primary/15", image: "/terry-put-down-the-guns-mobile.png", href: "https://terryccarneysr.com/" },
+  { title: "Put Down the Guns", category: "Mobile site · ICE-T collaboration", color: "from-amber-100/60 to-primary/15", image: "/put-down-the-guns-banner.png", href: "https://terryccarneysr.com/" },
   { title: "A2Z Mobile Detailing", category: "Automotive · Digital experience", color: "from-slate-200/70 to-primary/15", image: "/a2z-preview.jpg", href: "https://a2zmobiledetailing.com" },
   { title: "Filthy to Flawless", category: "Branding Idea · Website showcase", color: "from-cyan-100/70 to-primary/15", image: "/filthy-to-flawless-showcase.png", href: "https://filthytoflawless.com" },
   { title: "Lion Prophecy", category: "Coming Soon", color: "from-amber-100/60 to-orange-200/50", image: "/lion-prophecy-preview.jpg", comingSoon: true },
