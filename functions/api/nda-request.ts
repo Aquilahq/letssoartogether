@@ -1,4 +1,4 @@
-interface Env { RESEND_API_KEY?: string; NDA_SESSION_SECRET?: string; }
+interface Env { RESEND_API_KEY?: string; NDA_SESSION_SECRET?: string; NDA_ACCESS_CODE?: string; }
 const EMAIL_FROM = "Let's Soar Together <hello@letssoartogether.com>";
 const EMAIL_TO = "hello@letssoartogether.com";
 const NDA_VERSION = "aquila-collaboration-nda-v1";
@@ -11,8 +11,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const input = await context.request.json() as Record<string, unknown>;
     const name = String(input.name || "").trim(); const email = String(input.email || "").trim(); const projectName = String(input.projectName || "").trim(); const projectDescription = String(input.projectDescription || "").trim(); const requestedHelp = String(input.requestedHelp || "").trim(); const projectStage = String(input.projectStage || "").trim();
-    if (!name || !validEmail(email) || !projectName || !projectDescription || !requestedHelp || !projectStage || input.seriousInterest !== true || input.termsAccepted !== true || input.ndaAcknowledgment !== true) return json({ error: "Please complete every required field and acknowledgment." }, 400);
-    if (!context.env.RESEND_API_KEY || !context.env.NDA_SESSION_SECRET) return json({ error: "The collaboration service is not configured yet." }, 503);
+    if (!name || !validEmail(email) || !projectName || !projectDescription || !requestedHelp || !projectStage || input.seriousInterest !== true || input.termsAccepted !== true || input.ndaAcknowledgment !== true || String(input.accessCode || "").trim() !== context.env.NDA_ACCESS_CODE) return json({ error: "Please complete every required field and acknowledgment." }, 400);
+    if (!context.env.RESEND_API_KEY || !context.env.NDA_SESSION_SECRET || !context.env.NDA_ACCESS_CODE) return json({ error: "The collaboration service is not configured yet." }, 503);
     const submittedAt = new Date().toISOString();
     const text = ["AQUILA COLLABORATION REQUEST", `NDA version: ${NDA_VERSION}`, `Submitted: ${submittedAt}`, `Source: /work-with-aquila`, "", `Name: ${name}`, `Email: ${email}`, `Phone: ${String(input.phone || "Not provided")}`, `Project: ${projectName}`, `Company: ${String(input.company || "Not provided")}`, `Stage: ${projectStage}`, "", "What they are building:", projectDescription, "", "Requested help:", requestedHelp, "", "Confirmations: serious interest, NDA acknowledgment, and Terms accepted"].join("\n").slice(0, 30000);
     const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" }, body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: email, subject: `Aquila collaboration request: ${projectName}`, text }) });
