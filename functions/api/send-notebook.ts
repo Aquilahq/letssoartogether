@@ -1,7 +1,6 @@
-interface Env { CLOUDFLARE_API_TOKEN: string; }
+interface Env { RESEND_API_KEY: string; }
 
-const ACCOUNT_ID = "31fb51001e557f07a14e5320e5cb612b";
-const EMAIL_FROM = "hello@letssoartogether.com";
+const EMAIL_FROM = "Let's Soar Together <hello@letssoartogether.com>";
 const EMAIL_TO = "hello@letssoartogether.com";
 
 const json = (body: unknown, status = 200) =>
@@ -16,7 +15,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const input = await context.request.json() as { name?: string; email?: string; phone?: string; preferred?: string; notebook?: Record<string, unknown> };
     if (!input.name?.trim() || !input.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) return json({ error: "Please provide a valid name and email." }, 400);
-    if (!context.env.CLOUDFLARE_API_TOKEN) return json({ error: "Email delivery is not configured yet." }, 503);
+    if (!context.env.RESEND_API_KEY) return json({ error: "Email delivery is not configured yet." }, 503);
 
     const notebook = input.notebook || {};
     const lines = [
@@ -26,13 +25,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ];
     const text = lines.join("\n").slice(0, 30000);
     const html = `<div style="font-family:Arial,sans-serif;line-height:1.6;white-space:pre-wrap">${text.replace(/[&<>]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[char] || char))}</div>`;
-    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/email/sending/send`, {
+    const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: `Bearer ${context.env.CLOUDFLARE_API_TOKEN}`, "content-type": "application/json" },
-      body: JSON.stringify({ to: EMAIL_TO, from: EMAIL_FROM, subject: `Project Notebook from ${input.name.trim()}`, text, html }),
+      headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" },
+      body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, subject: `Project Notebook from ${input.name.trim()}`, text, html }),
     });
-    const result = await response.json() as { success?: boolean; errors?: unknown[] };
-    if (!response.ok || !result.success) return json({ error: "Email delivery failed.", details: result.errors || [] }, 502);
+    const result = await response.json() as { id?: string; message?: string };
+    if (!response.ok || !result.id) return json({ error: result.message || "Email delivery failed." }, 502);
     return json({ ok: true });
   } catch {
     return json({ error: "Unable to send the notebook right now." }, 500);
