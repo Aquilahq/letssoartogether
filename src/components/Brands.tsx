@@ -1,88 +1,11 @@
 import { motion } from "framer-motion";
-import { Megaphone, Palette, PenTool, TrendingUp, Video, Radio, Newspaper, Camera } from "lucide-react";
-import aquilaLogo from "@/assets/aquila-logo.jpg";
-import aquilaMediaLogo from "@/assets/aquila-media-logo.jpg";
+import { ArrowUpRight, BriefcaseBusiness, Compass, Layers3, Radio } from "lucide-react";
 
-const aquilaBrands = [
-  {
-    name: "Aquila PR & Design",
-    logo: aquilaLogo,
-    description: "Strategic public relations, graphic design, logos, and branding that amplify your organization's voice.",
-    services: [
-      { icon: Megaphone, label: "Public Relations" },
-      { icon: Palette, label: "Graphic Design" },
-      { icon: PenTool, label: "Logo & Branding" },
-      { icon: TrendingUp, label: "Media Strategy" },
-    ],
-  },
-  {
-    name: "Aquila Media",
-    logo: aquilaMediaLogo,
-    description: "Full-service media production and content creation — helping your story reach every screen and platform.",
-    services: [
-      { icon: Video, label: "Video Production" },
-      { icon: Camera, label: "Photography" },
-      { icon: Newspaper, label: "Content Creation" },
-      { icon: Radio, label: "Media Buying" },
-    ],
-  },
+const brands = [
+  { name: "The Aquila Project", label: "Strategy + creative direction", icon: Compass, description: "Big-picture thinking for organizations ready to clarify their story, sharpen their voice, and move with intention." },
+  { name: "Aquila Media", label: "Content + production", icon: Radio, description: "Visual storytelling, campaigns, and content systems designed to keep your brand present, human, and memorable." },
+  { name: "Aquila Consulting", label: "Clarity + growth", icon: BriefcaseBusiness, description: "Practical counsel for leaders who need a smart partner to turn ideas, opportunities, and change into action." },
 ];
 
-const Brands = () => (
-  <section id="about" className="py-28">
-    <div className="container mx-auto px-6 md:px-12">
-      <motion.p
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="text-primary font-body text-sm tracking-[0.3em] uppercase mb-3"
-      >
-        Our Brands
-      </motion.p>
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="font-display text-4xl md:text-5xl font-bold mb-16 max-w-3xl"
-      >
-        Two wings, <span className="text-gradient">one vision</span>.
-      </motion.h2>
-
-      <div className="grid md:grid-cols-2 gap-8">
-        {aquilaBrands.map((brand, i) => (
-          <motion.div
-            key={brand.name}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.15 }}
-            className="rounded-2xl border border-border bg-card p-8 md:p-10 hover:border-primary/40 transition-colors"
-          >
-            <img
-              src={brand.logo}
-              alt={`${brand.name} logo`}
-              className="h-16 w-auto rounded-lg mb-6 object-contain"
-            />
-            <h3 className="font-display text-2xl font-bold mb-3">{brand.name}</h3>
-            <p className="font-body text-muted-foreground text-sm leading-relaxed mb-8">
-              {brand.description}
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {brand.services.map((s) => (
-                <div
-                  key={s.label}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/50"
-                >
-                  <s.icon className="w-4 h-4 text-primary shrink-0" />
-                  <span className="font-body text-sm text-foreground">{s.label}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
+const Brands = () => <section id="about" className="depth-section border-y border-border bg-card py-20"><div className="container mx-auto px-6 md:px-12"><div className="mb-12 max-w-2xl"><p className="mb-3 text-sm uppercase tracking-[0.3em] text-primary">One creative ecosystem</p><h2 className="font-display text-3xl font-bold md:text-5xl">When something is stuck, bring us the <span className="text-gradient">whole picture.</span></h2><p className="mt-5 text-muted-foreground">A struggling website, company, offer, or idea rarely has just one problem. The Aquila family brings strategy, creative, media, and practical partnership together so we can find what&apos;s holding you back and build the way forward.</p></div><div className="grid gap-5 md:grid-cols-3">{brands.map((brand, i) => <motion.a href="#contact" key={brand.name} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="depth-card group rounded-2xl border border-border bg-background p-7 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5"><div className="mb-8 flex items-center justify-between"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary"><brand.icon className="h-5 w-5" /></div><ArrowUpRight className="h-5 w-5 text-muted-foreground transition group-hover:text-primary" /></div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{brand.label}</p><h3 className="mt-3 font-display text-2xl font-bold">{brand.name}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{brand.description}</p><span className="mt-6 inline-block text-sm font-semibold text-primary">Explore a fit →</span></motion.a>)}</div></div></section>;
 export default Brands;

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -45,7 +45,7 @@
     --sidebar-border: 220 20% 86%;
     --sidebar-ring: 220 72% 30%;
 
-    --font-display: 'Syne', sans-serif;
+    --font-display: 'Manrope', sans-serif;
     --font-body: 'Space Grotesk', sans-serif;
   }
 }
@@ -57,6 +57,72 @@ html {
 
 .site-shell {
   overscroll-behavior-y: none;
+}
+
+.nav-sky-layer {
+  background: linear-gradient(180deg, hsl(220 55% 13% / .24), transparent 92%);
+}
+
+.launch-logo {
+  filter: saturate(1.6) brightness(1.10) contrast(1.08) drop-shadow(0 0 5px hsl(205 100% 88% / .9)) drop-shadow(0 0 24px hsl(205 100% 70% / .72));
+}
+
+.brand-wordmark, .launch-wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: .18em;
+}
+
+.brand-wordmark {
+  margin-top: -.15rem;
+  font-size: .65rem;
+  color: hsl(220 72% 30%);
+}
+
+.launch-brand { text-align: center; }
+.launch-wordmark {
+  display: block;
+  margin-top: -.4rem;
+  font-size: clamp(1rem, 2vw, 1.45rem);
+  color: hsl(205 100% 90% / .92);
+  text-shadow: 0 0 12px hsl(205 100% 70% / .65);
+}
+
+.theatrical-line {
+  overflow: visible;
+  text-wrap: balance;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  padding-inline: .25rem;
+}
+
+.theatrical-line > span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .theatrical-line { font-size: clamp(1.85rem, 8.8vw, 2.8rem); }
+}
+
+/* A hanging brand lockup keeps the header feeling editorial instead of boxed-in. */
+.hanging-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  transform: translateY(0.35rem);
+  filter: drop-shadow(0 8px 10px hsl(220 72% 30% / .28)) drop-shadow(0 0 16px hsl(0 0% 100% / .72));
+}
+
+@media (min-width: 768px) {
+  .brand-lockup { margin-left: .35rem; }
+  .hanging-logo { transform: translateY(.55rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hanging-logo { transform: translateY(.35rem); }
 }
 
 @media (min-width: 768px) {
@@ -108,4 +174,108 @@ html {
   .border-glow {
     border-color: hsl(220, 72%, 30%, 0.3);
   }
+}
+
+/* Layered motion system: depth and movement everywhere except the hero sky. */
+.notebook-card {
+  transition: transform .45s cubic-bezier(.16, 1, .3, 1), box-shadow .45s ease;
+}
+
+.notebook-card:focus-within {
+  transform: scale(1.012);
+  box-shadow: 0 24px 80px hsl(220 72% 30% / .14);
+}
+
+/* Tablet and phone focus assist: bring the active field to the reading zone. */
+@media (max-width: 1100px) {
+  input, textarea {
+    scroll-margin-block: 35vh;
+    font-size: 16px !important;
+  }
+
+  input:focus, textarea:focus {
+    position: relative;
+    z-index: 2;
+    transform: scale(1.035);
+    transform-origin: center;
+    box-shadow: 0 0 0 3px hsl(220 72% 30% / .12), 0 16px 36px hsl(220 72% 30% / .12);
+  }
+}
+
+.depth-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.depth-section::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  width: 42rem;
+  height: 42rem;
+  top: -18rem;
+  right: -12rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, hsl(220 72% 30% / .12), transparent 68%);
+  filter: blur(18px);
+  animation: drift-orb 18s ease-in-out infinite alternate;
+}
+
+.depth-section::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  opacity: .38;
+  background-image: linear-gradient(hsl(220 40% 13% / .035) 1px, transparent 1px), linear-gradient(90deg, hsl(220 40% 13% / .035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  animation: grid-slide 24s linear infinite;
+}
+
+.vision-depth::before {
+  width: 34rem;
+  height: 34rem;
+  top: auto;
+  bottom: -18rem;
+  left: -10rem;
+  right: auto;
+  background: radial-gradient(circle, hsl(210 90% 75% / .25), transparent 68%);
+}
+
+.depth-card {
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+}
+
+.depth-card:hover {
+  transform: perspective(900px) translateY(-8px) rotateX(2deg) rotateY(-1deg);
+  box-shadow: 0 24px 50px hsl(220 72% 30% / .13), 0 0 0 1px hsl(220 72% 30% / .08);
+}
+
+.text-gradient {
+  background-size: 220% auto;
+  animation: gradient-shift 7s ease-in-out infinite alternate;
+}
+
+@keyframes drift-orb {
+  from { transform: translate3d(-5%, 4%, 0) scale(.9); }
+  to { transform: translate3d(7%, -6%, 0) scale(1.12); }
+}
+
+@keyframes grid-slide {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 48px 48px, 48px 48px; }
+}
+
+@keyframes gradient-shift {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-section::before, .depth-section::after, .text-gradient { animation: none; }
+  .depth-card:hover { transform: translateY(-3px); }
 }

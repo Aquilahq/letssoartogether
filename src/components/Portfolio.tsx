@@ -1,67 +1,25 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { ArrowUpRight, Maximize2, X } from "lucide-react";
 
 const projects = [
-  {
-    title: "Vanguard Rebranding",
-    category: "Branding & Logo",
-    color: "from-primary/20 to-primary/5",
-  },
-  {
-    title: "Metro Arts Festival",
-    category: "PR Campaign",
-    color: "from-primary/15 to-transparent",
-  },
-  {
-    title: "Horizon Tech Launch",
-    category: "Media Strategy",
-    color: "from-primary/10 to-primary/20",
-  },
+  { title: "One of a Kind Designz", category: "E-commerce · Brand experience", color: "from-rose-200/70 via-orange-100/50 to-violet-100/70", image: "/one-of-a-kind-designz.png", href: "https://1ofakinddesignz.com" },
+  { title: "Put Down the Guns", category: "Mobile site · Terry C. Carney Sr. & Ice-T", color: "from-amber-100/60 to-primary/15", image: "/terry-put-down-the-guns-mobile.png", href: "https://terryccarneysr.com/" },
+  { title: "A2Z Mobile Detailing", category: "Automotive · Digital experience", color: "from-slate-200/70 to-primary/15", image: "/a2z-preview.jpg", href: "https://a2zmobiledetailing.com" },
+  { title: "Filthy to Flawless", category: "Branding Idea · Website showcase", color: "from-cyan-100/70 to-primary/15", image: "/filthy-to-flawless-showcase.png", href: "https://filthytoflawless.com" },
+  { title: "Lion Prophecy", category: "Coming Soon", color: "from-amber-100/60 to-orange-200/50", image: "/lion-prophecy-preview.jpg", comingSoon: true },
+  { title: "Logos for Businesses", category: "Business identity · Since 1995", color: "from-primary/20 to-primary/5", featured: true },
+  { title: "Horizon Tech Launch", category: "Coming Soon", color: "from-primary/10 to-primary/20", comingSoon: true },
+  { title: "HUMAT", category: "Walmart Winner of the Year · Community platform", color: "from-emerald-100/60 to-primary/15", image: "/humat-preview.jpg", comingSoon: true },
 ];
 
-const Portfolio = () => (
-  <section id="work" className="py-28">
-    <div className="container mx-auto px-6 md:px-12">
-      <motion.p
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="text-primary font-body text-sm tracking-[0.3em] uppercase mb-3"
-      >
-        Selected Work
-      </motion.p>
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="font-display text-4xl md:text-5xl font-bold mb-16"
-      >
-        Results that <span className="text-gradient">speak</span>.
-      </motion.h2>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {projects.map((p, i) => (
-          <motion.div
-            key={p.title}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="group relative aspect-[4/5] rounded-2xl overflow-hidden border border-border hover:border-primary/40 transition-colors cursor-pointer"
-          >
-            <div className={`absolute inset-0 bg-gradient-to-br ${p.color}`} />
-            <div className="absolute inset-0 flex flex-col justify-end p-8">
-              <p className="text-primary font-body text-xs tracking-widest uppercase mb-2">
-                {p.category}
-              </p>
-              <h3 className="font-display text-2xl font-bold group-hover:text-primary transition-colors">
-                {p.title}
-              </h3>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
+const Portfolio = () => {
+  const [lightbox, setLightbox] = useState<(typeof projects)[number] | null>(null);
+  useEffect(() => { const close = (event: KeyboardEvent) => event.key === "Escape" && setLightbox(null); window.addEventListener("keydown", close); return () => window.removeEventListener("keydown", close); }, []);
+  return <section id="work" className="depth-section py-28"><div className="container mx-auto px-6 md:px-12"><motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="mb-3 text-sm uppercase tracking-[0.3em] text-primary">Artwork & Showcase</motion.p><motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16 font-display text-4xl font-bold md:text-5xl">A body of work that <span className="text-gradient">keeps growing.</span></motion.h2><div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{projects.map((p, i) => {
+    const card = <><div className="relative aspect-[16/11] overflow-hidden rounded-t-2xl"><div className={`absolute inset-0 bg-gradient-to-br ${p.color}`} />{p.image && <img src={p.image} alt={`${p.title} website preview`} className="absolute inset-0 h-full w-full object-cover object-top transition duration-700 group-hover:scale-105" />}<div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" /></div><div className="flex items-start justify-between gap-4 bg-card p-6 text-left md:p-7"><div><p className="mb-2 text-xs uppercase tracking-widest text-primary">{p.category}</p><h3 className="font-display text-2xl font-bold transition-colors group-hover:text-primary">{p.title}</h3><span className="mt-3 inline-flex items-center text-sm font-semibold text-primary">{p.comingSoon ? "Coming soon" : p.title === "Logos for Businesses" ? "View logo archive →" : p.image ? "View full preview →" : "Explore the thinking →"}</span></div>{!p.comingSoon && <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-background text-primary transition-transform group-hover:rotate-45">{p.image ? <Maximize2 className="h-5 w-5" /> : <ArrowUpRight className="h-5 w-5" />}</span>}</div></>;
+    const className = `depth-card group relative overflow-hidden rounded-2xl border border-border transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 ${p.featured ? "md:col-span-2 md:mx-auto md:w-1/2" : ""}`;
+    return <motion.div key={p.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }}>{p.comingSoon ? <div className={`${className} block`} aria-label={`${p.title} coming soon`}>{card}</div> : p.image && !p.href ? <button type="button" onClick={() => setLightbox(p)} className={`${className} block w-full cursor-zoom-in`} aria-label={`View ${p.title} preview full screen`}>{card}</button> : p.href ? <a href={p.href} target="_blank" rel="noreferrer" className={`${className} block`} aria-label={`Visit ${p.title} website`}>{card}</a> : <a href="#contact" className={`${className} block`} aria-label={`Discuss ${p.title}`}>{card}</a>}</motion.div>;
+  })}</div><p className="mx-auto mt-10 max-w-2xl text-center text-muted-foreground">This is a growing showcase—not a complete list. From business logos and brand identities to websites, campaigns, and digital experiences, the work spans since 1995, including identities created for companies such as Kingmax Micro Technology and brands represented in retail environments.</p></div>{lightbox && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/80 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-label={`${lightbox.title} preview`} onMouseDown={(e) => e.target === e.currentTarget && setLightbox(null)}><button type="button" onClick={() => setLightbox(null)} className="absolute right-5 top-5 rounded-full bg-background p-3 text-foreground shadow-xl hover:text-primary" aria-label="Close preview"><X className="h-6 w-6" /></button><div className="max-h-[90vh] max-w-6xl overflow-hidden rounded-2xl bg-background p-2 shadow-2xl"><img src={lightbox.image} alt={`${lightbox.title} enlarged website preview`} className="max-h-[85vh] max-w-full rounded-xl object-contain" /><p className="px-3 py-2 text-sm font-semibold">{lightbox.title} <span className="font-normal text-muted-foreground">· click outside or press Escape to close</span></p></div></div>}</section>;
+};
 export default Portfolio;

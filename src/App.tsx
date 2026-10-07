@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LaunchGate from "./components/LaunchGate";
 import ProjectNotebook from "./components/ProjectNotebook";
+import LegalPage from "./pages/LegalPage";
+import StartPage from "./pages/StartPage";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +21,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<LaunchGate><Index /></LaunchGate>} />
           <Route path="/vision-lab" element={<ProjectNotebook standalone />} />
+          <Route path="/start" element={<StartPage />} />
+          <Route path="/intellectual-property" element={<LegalPage kind="intellectual-property" />} />
+          <Route path="/privacy" element={<LegalPage kind="privacy" />} />
+          <Route path="/terms" element={<LegalPage kind="terms" />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
