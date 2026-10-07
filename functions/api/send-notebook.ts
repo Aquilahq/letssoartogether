@@ -1,7 +1,7 @@
 interface Env { RESEND_API_KEY: string; }
 
 const EMAIL_FROM = "Let's Soar Together <hello@letssoartogether.com>";
-const EMAIL_TO = "hello@letssoartogether.com";
+const EMAIL_TO = "aquilaconsulting@gmail.com";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", "access-control-allow-origin": "*" } });
