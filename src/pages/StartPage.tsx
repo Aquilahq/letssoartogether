@@ -1,4 +1,4 @@
-import { ArrowRight, Monitor, Smartphone, Tablet } from "lucide-react";
+import { ArrowRight, Monitor, Smartphone } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Seo, { aquilaOrganization } from "../components/Seo";
@@ -44,12 +44,11 @@ const StartPage = () => (
 
         <div className="mt-16 border-t border-border pt-10">
           <h2 className="font-display text-3xl font-bold">Built for the way ideas move.</h2>
-          <p className="mt-3 max-w-2xl text-muted-foreground">There is a web experience today, with mobile and tablet experiences coming soon, so your ideas can stay with you wherever you are thinking, planning, or creating.</p>
-          <div className="mt-7 grid gap-4 md:grid-cols-3">
-            <Link to="/vision-lab" className="rounded-xl border border-primary/30 bg-primary/5 p-5"><Monitor size={20} className="text-primary" /><strong className="mt-3 block">Start on the Web</strong><span className="mt-1 block text-sm text-muted-foreground">Begin Vision Lab now.</span></Link>
+          <p className="mt-3 max-w-2xl text-muted-foreground">There is a web app today that works beautifully on a tablet, with a dedicated mobile app coming soon, so your ideas can stay with you wherever you are thinking, planning, or creating.</p>
+          <div className="mt-7 grid gap-4 md:grid-cols-2">
+            <Link to="/vision-lab" className="rounded-xl border border-primary/30 bg-primary/5 p-5"><Monitor size={20} className="text-primary" /><strong className="mt-3 block">Web App</strong><span className="mt-1 block text-sm text-muted-foreground">Start Vision Lab now. Tablet friendly—and the most robust way to work when you want room to think, plan, and build.</span></Link>
             <Link to="/vision-lab" className="rounded-xl border border-border p-5"><Smartphone size={20} className="text-primary" /><strong className="mt-3 block">Mobile App</strong><span className="mt-1 block text-sm text-muted-foreground">Coming soon. Start on the web today.</span></Link>
-            <Link to="/vision-lab" className="rounded-xl border border-border p-5"><Tablet size={20} className="text-primary" /><strong className="mt-3 block">Tablet App</strong><span className="mt-1 block text-sm text-muted-foreground">Coming soon. Start on the web today.</span></Link>
-          </div>
+            </div>
           <p className="mt-6 text-sm font-medium text-muted-foreground">Your journey stays connected across every device.</p>
         </div>
       </section>
