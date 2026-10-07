@@ -9,6 +9,7 @@ import LaunchGate from "./components/LaunchGate";
 import ProjectNotebook from "./components/ProjectNotebook";
 import LegalPage from "./pages/LegalPage";
 import StartPage from "./pages/StartPage";
+import WorkWithAquila from "./pages/WorkWithAquila";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/intellectual-property" element={<LegalPage kind="intellectual-property" />} />
           <Route path="/privacy" element={<LegalPage kind="privacy" />} />
           <Route path="/terms" element={<LegalPage kind="terms" />} />
+          <Route path="/work-with-aquila" element={<WorkWithAquila />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

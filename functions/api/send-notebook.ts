@@ -22,7 +22,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const lines = [
       `Name: ${input.name.trim()}`, `Company: ${input.company || "Not provided"}`, `Email: ${input.email.trim()}`, `Phone: ${input.phone || "Not provided"}`, `Preferred contact: ${input.preferred || "Email"}`, "",
       "PROJECT NOTEBOOK", `Path: ${notebook.path || "Not selected"}`, `Thinking style: ${Array.isArray(notebook.styles) ? notebook.styles.join(", ") : "Not selected"}`, "",
-      "Message:", String(input.message || "Not provided"), "", "Brain Dump:", String(notebook.brainDump || ""), "", "Why it matters:", String(notebook.why || ""), "", "The problem:", String(notebook.problem || ""), "", "Who it helps:", String(notebook.who || ""), "", "Vision:", String(notebook.vision || ""), "", "Partners:", String(notebook.partners || ""), "", "Next step:", String(notebook.nextStep || ""), `When: ${notebook.when || "Not selected"}`,
+      "Message:", String(input.message || "Not provided"), "", "Brain Dump:", String(notebook.brainDump || ""), "", "Why it matters:", String(notebook.why || ""), "", "The problem:", String(notebook.problem || ""), "", "Who it helps:", String(notebook.who || ""), "", "Vision:", String(notebook.vision || ""), "", "Partners:", String(notebook.partners || ""), "", "Next step:", String(notebook.nextStep || ""), `When: ${notebook.when || "Not selected"}`, `Terms accepted: ${notebook.termsAcceptedAt || "Not recorded"}`, 
     ];
     const text = lines.join("\n").slice(0, 30000);
     const html = `<div style="font-family:Arial,sans-serif;line-height:1.6;white-space:pre-wrap">${text.replace(/[&<>]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[char] || char))}</div>`;

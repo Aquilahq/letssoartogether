@@ -10,13 +10,13 @@ type Notebook = {
   path: string[]; styles: string[]; brainDump: string; why: string; problem: string;
   who: string; current: string; vision: string; partners: string; nextStep: string;
   when: string; roadblocks: string[]; perspective: string; change: string;
-  ideas: Idea[]; selected: number[];
+  ideas: Idea[]; selected: number[]; termsAcceptedAt?: string;
 };
 
 const freshNotebook: Notebook = {
   path: [], styles: [], brainDump: "", why: "", problem: "", who: "", current: "",
   vision: "", partners: "", nextStep: "", when: "", roadblocks: [], perspective: "",
-  change: "", ideas: [], selected: [],
+  change: "", ideas: [], selected: [], termsAcceptedAt: "",
 };
 
 const pages = [
@@ -60,6 +60,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isImmersive, setIsImmersive] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
   const notebookRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -106,6 +107,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
   const updateIdea = (id: number, patch: Partial<Idea>) => update("ideas", book.ideas.map((idea) => idea.id === id ? { ...idea, ...patch } : idea));
 
   const pageTitle = pages.find((item) => item.id === page)?.label;
+  const termsAccepted = Boolean(book.termsAcceptedAt);
   const journey = book.path.includes("I’m in the middle of it") || book.path.includes("I'm in the middle of it")
     ? { dump: ["Regain your momentum", "Get everything out of your head, especially the part that feels stuck."], why: ["What will move this forward?", "Find the reason that makes the next step worth taking."], problem: ["What is blocking the next move?", "Name the friction clearly so it becomes workable."], vision: "Imagine the breakthrough", focus: ["What would create momentum?", "Choose the idea or action most likely to get you moving again."], next: ["Make the next move visible", "Turn the hump into one small, realistic step."] }
     : book.path.includes("I want to dream and build") || book.path.includes("I want to start something")
@@ -113,12 +115,13 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
       : { dump: ["Find the thread", "Start wherever you are. We’ll help you make sense of what is already in your head."], why: ["What would help most right now?", "Follow the thread that feels most useful, even if it is not fully clear yet."], problem: ["What needs attention first?", "Name the tension, question, or obstacle without needing to solve it yet."], vision: "Imagine a clearer way forward", focus: ["What deserves your attention now?", "Choose the idea or insight that could create the most clarity."], next: ["Find one workable next step", "Make the path forward feel smaller, clearer, and possible."] };
   const structuredData = standalone ? { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Vision Lab", description: "A Let’s Soar Together™ experience developed through Aquila Project.", url: "https://letssoartogether.com/vision-lab", publisher: { "@type": "Organization", name: "Aquila Project" }, copyrightHolder: { "@type": "Person", name: "James Bobik" }, copyrightYear: 2026 } : undefined;
   return <section ref={notebookRef} id="project-notebook" className={`creative-notebook ${standalone ? "standalone" : ""} ${isRevealed ? "is-revealed" : ""} ${isImmersive ? "is-immersive" : ""} ${printEntireNotebook ? "print-entire-notebook" : ""}`}>
+    {!termsAccepted && <div className="fixed inset-0 z-[120] flex items-center justify-center bg-foreground/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="terms-ack-title"><div className="w-full max-w-lg rounded-2xl bg-background p-6 shadow-2xl md:p-8"><p className="eyebrow">Before you begin</p><h2 id="terms-ack-title" className="mt-2 font-display text-3xl font-bold">Your ideas belong to you.</h2><p className="mt-4 text-muted-foreground">Let&apos;s Soar Together is designed to help you develop and organize your ideas. By continuing, you agree to our <a className="font-semibold text-primary underline" href="/terms">Terms of Use</a>, including our confidentiality and collaboration provisions.</p><label className="mt-6 flex min-h-12 cursor-pointer items-start gap-3 text-base"><input type="checkbox" checked={termsChecked} onChange={(event) => setTermsChecked(event.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-primary" /> <span>I agree to the Terms of Use.</span></label><button type="button" disabled={!termsChecked} onClick={() => setBook((current) => ({ ...current, termsAcceptedAt: new Date().toISOString() }))} className="mt-6 w-full rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40">Continue to Vision Lab</button></div></div>}
     {standalone && <Seo title="Vision Lab | Let’s Soar Together™" description="Vision Lab, a Let’s Soar Together™ experience developed through Aquila Project." path="/vision-lab" structuredData={structuredData} />}
     {standalone && <h1 className="sr-only">Vision Lab | Let&apos;s Soar Together™</h1>}
     <div className="notebook-wrap">
       <header className="notebook-header">
         <div className="notebook-brand"><span className="notebook-mark"><BookIcon /></span><div><span className="eyebrow">Vision Lab · Project Notebook</span><strong>Your ideas, in progress.</strong></div></div>
-        <div className="notebook-status">{standalone && <a className="return-to-site" href="/">← Back to site</a>}<span className={`save-dot ${saved ? "is-saving" : ""}`} /> {saved ? "Saved privately" : "Saved on this device"} <button className="immersive-close" onClick={() => setIsImmersive(false)} aria-label="Close Vision Lab"><Minimize2 size={17} /><span>Exit Vision Lab</span></button><button className="notebook-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open notebook pages"><Menu size={18} /></button></div>
+        <div className="notebook-status">{standalone && <a className="return-to-site" href="/">← Back to site</a>}<a className="return-to-site" href="/work-with-aquila">Work With Aquila</a><span className={`save-dot ${saved ? "is-saving" : ""}`} /> {saved ? "Saved privately" : "Saved on this device"} <button className="immersive-close" onClick={() => setIsImmersive(false)} aria-label="Close Vision Lab"><Minimize2 size={17} /><span>Exit Vision Lab</span></button><button className="notebook-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open notebook pages"><Menu size={18} /></button></div>
       </header>
       {menuOpen && <nav className="notebook-menu-panel">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : ""} onClick={() => go(item.id)}><span>{String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}</nav>}
       <div className="notebook-progress"><div style={{ width: `${Math.max(8, ((pageIndex + 1) / pages.length) * 100)}%` }} /></div>
