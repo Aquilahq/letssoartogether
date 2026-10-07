@@ -13,7 +13,8 @@ export const onRequestOptions: PagesFunction = () => new Response(null, {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
-    const input = await context.request.json() as { name?: string; company?: string; email?: string; phone?: string; preferred?: string; message?: string; subject?: string; notebook?: Record<string, unknown> };
+    const input = await context.request.json() as { name?: string; company?: string; email?: string; phone?: string; preferred?: string; message?: string; subject?: string; website?: string; notebook?: Record<string, unknown> };
+    if (input.website?.trim()) return json({ ok: true });
     if (!input.name?.trim() || !input.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) return json({ error: "Please provide a valid name and email." }, 400);
     if (!context.env.RESEND_API_KEY) return json({ error: "Email delivery is not configured yet." }, 503);
 
