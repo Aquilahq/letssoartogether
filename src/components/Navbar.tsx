@@ -1,4 +1,4 @@
-import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, Menu, Phone, X } from "lucide-react";
 import aquilaLogo from "@/assets/aquila-watermark-hd.png";
@@ -16,19 +16,12 @@ const itemVariants = { hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [navHidden, setNavHidden] = useState(false);
-  const lastScrollY = useRef(0);
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 420);
-      setNavHidden(y > 120 && y > lastScrollY.current + 4 ? true : y < lastScrollY.current - 4 || y <= 20 ? false : navHidden);
-      lastScrollY.current = y;
-    };
+    const onScroll = () => setScrolled(window.scrollY > 420);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [navHidden]);
+  }, []);
   const close = () => setMenuOpen(false);
   const handleLink = (event: MouseEvent<HTMLAnchorElement>, link: { label: string; href: string }) => {
     close();
@@ -38,7 +31,7 @@ const Navbar = () => {
     }
   };
   return <>
-    <nav className={`nav-sky-layer fixed left-0 right-0 top-0 z-50 px-6 py-2 transition-all duration-500 md:px-12 md:py-2 ${navHidden && !menuOpen ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"} ${scrolled ? "nav-scrolled text-slate-950" : "text-white"}`}>
+    <nav className={`nav-sky-layer fixed left-0 right-0 top-0 z-50 px-6 py-2 transition-colors duration-300 md:px-12 md:py-2 ${scrolled ? "nav-scrolled text-slate-950" : "text-white"}`}>
       <div className="flex items-center justify-between">
         <a href="#" className="group brand-lockup flex items-center" onClick={close} aria-label="Let's Soar Together home"><span className="hanging-logo relative"><img src={aquilaLogo} alt="Let's Soar Together logo" className="h-28 w-auto rounded opacity-95 transition-transform duration-500 group-hover:scale-[1.03] md:h-[9.2rem]" /><span className="absolute -inset-2 -z-10 rounded-full bg-primary/20 blur-xl transition-opacity group-hover:opacity-100" /></span></a>
         <div className={`hidden items-center gap-6 rounded-full px-3 py-2 transition-all duration-300 md:flex ${scrolled ? "bg-white/90 shadow-lg shadow-slate-950/10 ring-1 ring-slate-950/10 backdrop-blur-md" : ""}`}>{links.map((link) => <a key={link.href} href={link.href} onClick={(event) => handleLink(event, link)} className={`relative text-sm font-medium transition-colors after:absolute after:-bottom-2 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all hover:after:w-full ${scrolled ? "text-slate-900 hover:text-slate-950" : "text-white/90 hover:text-white"}`}>{link.label}</a>)}<a href="#call" onClick={(event) => { event.preventDefault(); window.location.href = atob("dGVsOisxOTA5ODMzNjIyNw=="); }} aria-label="Call James Bobik" title="Call" className={`inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors ${scrolled ? "text-slate-900 hover:bg-slate-950/10 hover:text-slate-950" : "text-white/90 hover:bg-white/15 hover:text-white"}`}><Phone className="h-4 w-4" /></a><a href="#contact" className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-transform hover:-translate-y-0.5 ${scrolled ? "bg-slate-950 text-white shadow-md" : "bg-white/15 text-white ring-1 ring-white/50 backdrop-blur-md"}`}>Let&apos;s talk <ArrowUpRight className="h-4 w-4" /></a></div>
