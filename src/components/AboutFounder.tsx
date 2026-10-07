@@ -7,7 +7,7 @@ const AboutFounder = () => (
         <p className="mb-3 text-sm uppercase tracking-[0.3em] text-primary">About Aquila</p>
         <h2 className="font-display text-4xl font-bold md:text-6xl">A place for possibility to <span className="text-gradient">take flight.</span></h2>
         <p className="mt-6 text-xl leading-relaxed text-muted-foreground">Aquila exists because ideas deserve more than a contact form and more than a quick answer. Aquila brings consulting, technology, media, design, and creative problem-solving together so people can move what is in their head toward something real.</p>
-        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">Aquila Consulting supports professional services. Aquila Project builds technology, systems, Vision Lab, Project Notebook, Architect, and Let&apos;s Soar Together™. Aquila Media develops stories and content. Together, they create a connected way to think, build, and grow.</p>
+        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">Aquila Consulting supports professional services. Aquila Project builds technology, systems, Vision Lab, Project Notebook, and Let&apos;s Soar Together™. Aquila Media develops stories and content. Together, they create a connected way to think, build, and grow.</p>
         <p className="mt-4 text-lg leading-relaxed text-muted-foreground">Aquila is also developing a platform for people with ADHD and ADD, including highly capable business owners, builders, and strategists who need space to think, organize, create, and turn complex ideas into forward motion.</p>
       </div>
       <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">

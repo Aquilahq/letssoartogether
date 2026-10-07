@@ -10,7 +10,7 @@ const content = {
     description: "Intellectual property and copyright information for Let’s Soar Together and Aquila Project.",
     heading: "Intellectual Property",
     body: <>
-      <p>Let’s Soar Together™, Vision Lab, Project Notebook, Architect, and related original works are developed through Aquila Project.</p>
+      <p>Let’s Soar Together™, Vision Lab, Project Notebook, and related original works are developed through Aquila Project.</p>
       <p>Unless otherwise identified, original website content, software, source code, graphics, interface designs, written materials, documentation, audiovisual works, and other copyrightable materials are owned by James Bobik.</p>
       <p>© 2026 James Bobik. All rights reserved.</p>
       <p>Aquila is the umbrella brand for Aquila Consulting, Aquila Project, and Aquila Media. Brand names and marks are used to identify their respective initiatives and services.</p>
