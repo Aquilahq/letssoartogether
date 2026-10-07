@@ -10,7 +10,7 @@ const projects = [
   { title: "A2Z Mobile Detailing", category: "Automotive · Digital experience", color: "from-slate-200/70 to-primary/15", image: "/a2z-preview.jpg", href: "https://a2zmobiledetailing.com" },
   { title: "Filthy to Flawless", category: "Branding Idea · Website showcase", color: "from-cyan-100/70 to-primary/15", image: "/filthy-to-flawless-showcase.png", href: "https://filthytoflawless.com" },
   { title: "The Lion Prophecy", category: "Coming Soon · Book by Albert Zaiser", color: "from-amber-100/60 to-orange-200/50", image: "/lion-prophecy-preview.jpg", comingSoon: true },
-  { title: "Logos for Businesses", category: "Business identity · Since 1995", color: "from-primary/20 to-primary/5", featured: true },
+  { title: "Logos for Businesses", category: "Business identity · Since 1995", color: "from-primary/20 to-primary/5", image: "/logos/logo-archive.jpg", featured: true },
   { title: "Horizon Tech Launch", category: "Coming Soon", color: "from-primary/10 to-primary/20", comingSoon: true },
   { title: "HUMAT", category: "Walmart Winner of the Year · Community platform", color: "from-emerald-100/60 to-primary/15", image: "/humat-preview.jpg", comingSoon: true },
 ];
