@@ -144,6 +144,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
       </header>
       {menuOpen && <nav className="notebook-menu-panel">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : ""} onClick={() => go(item.id)}><span>{String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}</nav>}
       <div className="notebook-progress"><div style={{ width: `${Math.max(8, ((pageIndex + 1) / pages.length) * 100)}%` }} /></div>
+      <nav className="journey-progress-pages" aria-label="Discovery Journey progress">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : index < pageIndex ? "complete" : ""} onClick={() => go(item.id)} aria-label={`${item.label}, Page ${index + 1}`}><span>Page {index + 1}</span></button>)}</nav>
 
       <div className="notebook-layout">
         <aside className="notebook-sidebar"><div className="side-label">Your pages</div>{pages.map((item, index) => <button key={item.id} onClick={() => go(item.id)} className={item.id === page ? "active" : ""}><span>{index < pageIndex ? <Check size={13} /> : String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}<div className="private-note"><Bookmark size={15} /><strong>Private by default</strong><small>Your notebook stays on this device unless you choose to share it.</small></div></aside>
