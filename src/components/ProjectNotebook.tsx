@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import Seo from "./Seo";
 import {
   ArrowLeft, ArrowRight, Bookmark, Check, Copy, Lightbulb,
-  Mail, Menu, Minimize2, Pencil, Plus, Send, Sparkles, Star, Trash2, X
+  Mail, Menu, Minimize2, Pencil, Plus, Send, Sparkles, Star, Trash2, Upload, X
 } from "lucide-react";
 
 type Idea = { id: number; title: string; text: string; category: string; favorite: boolean };
@@ -24,6 +24,25 @@ const cleanBrainDump = (value: string) => value
   .replace(/\\n(?:Answer|A):\\s*/g, "\n")
   .replace(/\\n/g, "\n");
 const xmlEscape = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&apos;");
+const xmlValue = (root: Element, selector: string) => root.querySelector(selector)?.textContent || "";
+const notebookFromXml = (xml: string): Notebook => {
+  const document = new DOMParser().parseFromString(xml, "application/xml");
+  if (document.querySelector("parsererror") || !document.documentElement.matches("discoveryJourney, visionLabFile")) throw new Error("That file is not a Vision Lab file.");
+  const root = document.documentElement;
+  const answers = root.querySelector("answers");
+  const perspectiveAnswers = Object.fromEntries(Array.from(root.querySelectorAll("perspectiveAnswers > perspective")).map((item) => [item.getAttribute("name") || "Perspective", item.textContent || ""]));
+  const ideas = Array.from(root.querySelectorAll("ideas > idea")).map((item, index) => ({ id: Date.now() + index, title: xmlValue(item, "title"), text: xmlValue(item, "text"), category: item.getAttribute("category") || "Explore this", favorite: false }));
+  return {
+    ...freshNotebook,
+    brainDump: xmlValue(answers || root, "brainDump"), why: xmlValue(answers || root, "why"), problem: xmlValue(answers || root, "problem"),
+    who: xmlValue(answers || root, "who"), current: xmlValue(answers || root, "currentState"), vision: xmlValue(answers || root, "vision"),
+    partners: xmlValue(answers || root, "partners"), nextStep: xmlValue(answers || root, "nextStep"), when: xmlValue(answers || root, "when"),
+    perspectiveAnswers, perspective: Object.keys(perspectiveAnswers)[0] || "", ideas,
+    path: Array.from(root.querySelectorAll("paths > item")).map((item) => item.textContent || ""),
+    styles: Array.from(root.querySelectorAll("thinkingStyles > item")).map((item) => item.textContent || ""),
+    roadblocks: Array.from(root.querySelectorAll("roadblocks > item")).map((item) => item.textContent || ""),
+  };
+};
 const notebookToXml = (book: Notebook) => {
   const field = (name: string, value: string) => `    <${name}>${xmlEscape(value || "")}</${name}>`;
   const list = (name: string, values: string[]) => [`    <${name}>`, ...values.map((value) => `      <item>${xmlEscape(value)}</item>`), `    </${name}>`];
@@ -33,6 +52,7 @@ const notebookToXml = (book: Notebook) => {
     '<discoveryJourney version="1.0">',
     '  <metadata>',
     '    <title>Let&apos;s Soar Together Discovery Journey</title>',
+    '    <format>Vision Lab file</format>',
     '    <website>https://letssoartogether.com</website>',
     '    <contact>hello@letssoartogether.com</contact>',
     `    <savedAt>${new Date().toISOString()}</savedAt>`,
@@ -100,6 +120,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
   const [isImmersive, setIsImmersive] = useState(false);
   const [termsChecked, setTermsChecked] = useState(false);
   const notebookRef = useRef<HTMLElement>(null);
+  const xmlInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const open = () => { setIsImmersive(true); setIsRevealed(true); };
@@ -159,6 +180,18 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
     link.click();
     URL.revokeObjectURL(url);
   };
+  const loadXml = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    try {
+      setBook(notebookFromXml(await file.text()));
+      setPrompt("");
+      setPage("start");
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "Unable to load that Vision Lab file.");
+    }
+  };
   const updateIdea = (id: number, patch: Partial<Idea>) => update("ideas", book.ideas.map((idea) => idea.id === id ? { ...idea, ...patch } : idea));
 
   const pageTitle = pages.find((item) => item.id === page)?.label;
@@ -170,6 +203,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
       : { dump: ["Find the thread", "Start wherever you are. We’ll help you make sense of what is already in your head."], why: ["What would help most right now?", "Follow the thread that feels most useful, even if it is not fully clear yet."], problem: ["What needs attention first?", "Name the tension, question, or obstacle without needing to solve it yet."], vision: "Imagine a clearer way forward", focus: ["What deserves your attention now?", "Choose the idea or insight that could create the most clarity."], next: ["Find one workable next step", "Make the path forward feel smaller, clearer, and possible."] };
   const structuredData = standalone ? { "@context": "https://schema.org", "@type": "SoftwareApplication", name: "Vision Lab", description: "A Let’s Soar Together™ experience developed through Aquila Project.", url: "https://letssoartogether.com/vision-lab", publisher: { "@type": "Organization", name: "Aquila Project" }, copyrightHolder: { "@type": "Person", name: "James Bobik" }, copyrightYear: 2026 } : undefined;
   return <section ref={notebookRef} id="project-notebook" className={`creative-notebook ${standalone ? "standalone" : ""} ${isRevealed ? "is-revealed" : ""} ${isImmersive ? "is-immersive" : ""} ${printEntireNotebook ? "print-entire-notebook" : ""}`}>
+    <input ref={xmlInputRef} className="sr-only" type="file" accept=".xml,application/xml,text/xml" onChange={loadXml} />
     {!termsAccepted && <div className="fixed inset-0 z-[120] flex items-center justify-center bg-foreground/70 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="terms-ack-title"><div className="w-full max-w-lg rounded-2xl bg-background p-6 shadow-2xl md:p-8"><p className="eyebrow">Before you begin</p><h2 id="terms-ack-title" className="mt-2 font-display text-3xl font-bold">YOUR VISION IS YOURS</h2><p className="mt-4 text-lg font-semibold">Your ideas belong to you.</p><p className="mt-2 text-muted-foreground">Let&apos;s Soar Together helps you organize, clarify, and develop your vision. Aquila does not claim ownership of the original ideas you create or submit through Vision Lab.</p><a className="mt-4 inline-flex font-semibold text-primary underline" href="/terms">View Terms of Use</a><label className="mt-6 flex min-h-12 cursor-pointer items-start gap-3 text-base"><input type="checkbox" checked={termsChecked} onChange={(event) => setTermsChecked(event.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-primary" /> <span>I agree to the Terms of Use and understand how my ideas and information are handled.</span></label><button type="button" disabled={!termsChecked} onClick={() => setBook((current) => ({ ...current, termsAcceptedAt: new Date().toISOString() }))} className="mt-6 w-full rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40">Continue to Vision Lab</button></div></div>}
     {standalone && <Seo title="Vision Lab | Let’s Soar Together™" description="Vision Lab, a Let’s Soar Together™ experience developed through Aquila Project." path="/vision-lab" structuredData={structuredData} />}
     {standalone && <h1 className="sr-only">Vision Lab | Let&apos;s Soar Together™</h1>}
@@ -178,12 +212,12 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
         <div className="notebook-brand"><span className="notebook-mark"><BookIcon /></span><div><span className="eyebrow">Vision Lab · Project Notebook</span><strong>Your ideas, in progress.</strong></div></div>
         <div className="notebook-status">{standalone && <a className="return-to-site" href="/">← Back to site</a>}<a className="return-to-site" href="/work-with-aquila">Work With Aquila</a><span className={`save-dot ${saved ? "is-saving" : ""}`} /> {saved ? "Saved privately" : "Saved on this device"} <button className="immersive-close" onClick={() => setIsImmersive(false)} aria-label="Close Vision Lab"><Minimize2 size={17} /><span>Exit Vision Lab</span></button><button className="notebook-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open notebook pages"><Menu size={18} /></button></div>
       </header>
-      {menuOpen && <nav className="notebook-menu-panel">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : ""} onClick={() => go(item.id)}><span>{String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}<button className="download-xml-sidebar" onClick={() => { downloadXml(); setMenuOpen(false); }}>Download XML</button></nav>}
+      {menuOpen && <nav className="notebook-menu-panel">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : ""} onClick={() => go(item.id)}><span>{String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}<button className="download-xml-sidebar" onClick={() => { downloadXml(); setMenuOpen(false); }}>Download XML</button><button className="download-xml-sidebar" onClick={() => { xmlInputRef.current?.click(); setMenuOpen(false); }}><Upload size={14} /> Load Vision Lab file</button></nav>}
       <div className="notebook-progress"><div style={{ width: `${Math.max(8, ((pageIndex + 1) / pages.length) * 100)}%` }} /></div>
       <nav className="journey-progress-pages" aria-label="Discovery Journey progress">{pages.map((item, index) => <button key={item.id} className={item.id === page ? "active" : index < pageIndex ? "complete" : ""} onClick={() => go(item.id)} aria-label={index === pages.length - 1 ? "Summary and conclusion, Page 10" : `${item.label}, Page ${index + 1}`} title={index === pages.length - 1 ? "Summary and conclusion" : item.label}><span>{index + 1}</span></button>)}</nav>
 
       <div className="notebook-layout">
-        <aside className="notebook-sidebar"><div className="side-label">Your pages</div>{pages.map((item, index) => <button key={item.id} onClick={() => go(item.id)} className={item.id === page ? "active" : ""}><span>{index < pageIndex ? <Check size={13} /> : String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}<button className="download-xml-sidebar" onClick={downloadXml}>Download XML</button><div className="private-note"><Bookmark size={15} /><strong>Private by default</strong><small>Your notebook stays on this device unless you choose to share it.</small></div></aside>
+        <aside className="notebook-sidebar"><div className="side-label">Your pages</div>{pages.map((item, index) => <button key={item.id} onClick={() => go(item.id)} className={item.id === page ? "active" : ""}><span>{index < pageIndex ? <Check size={13} /> : String(index + 1).padStart(2, "0")}</span>{item.label}</button>)}<button className="download-xml-sidebar" onClick={downloadXml}>Download XML</button><button className="download-xml-sidebar" onClick={() => xmlInputRef.current?.click()}><Upload size={14} /> Load Vision Lab file</button><div className="private-note"><Bookmark size={15} /><strong>Private by default</strong><small>Your notebook stays on this device unless you choose to share it.</small></div></aside>
         <main className="notebook-stage">
           {page !== "summary" && <div className="answer-guidance"><Sparkles size={14} /><span><strong>Helpful hint:</strong> Your answer becomes one line in your final mission statement. A few honest words are enough—“I’m not sure yet” is a useful answer too.</span></div>}
           <div className="page-kicker"><span>Page {String(pageIndex + 1).padStart(2, "0")}</span><span>{pageTitle}</span></div>
