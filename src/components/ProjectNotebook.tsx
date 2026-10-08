@@ -151,7 +151,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
-  useEffect(() => { try { const savedBook = localStorage.getItem(key); if (savedBook) { const parsed = JSON.parse(savedBook); setBook({ ...freshNotebook, ...parsed, brainDump: cleanBrainDump(parsed.brainDump || ""), perspectiveAnswers: parsed.perspectiveAnswers || {}, path: Array.isArray(parsed.path) ? parsed.path : parsed.path ? [parsed.path] : [] }); } } catch { /* a clean notebook is a good fallback */ } }, []);
+  useEffect(() => { try { const savedBook = localStorage.getItem(key); if (savedBook) { const parsed = JSON.parse(savedBook); setBook({ ...freshNotebook, ...parsed, brainDump: cleanBrainDump(parsed.brainDump || ""), perspectiveAnswers: parsed.perspectiveAnswers || {}, path: Array.isArray(parsed.path) ? parsed.path : parsed.path ? [parsed.path] : [], styles: Array.isArray(parsed.styles) ? parsed.styles : [], roadblocks: Array.isArray(parsed.roadblocks) ? parsed.roadblocks : [], ideas: Array.isArray(parsed.ideas) ? parsed.ideas : [], selected: Array.isArray(parsed.selected) ? parsed.selected : [] }); } } catch { /* a clean notebook is a good fallback */ } }, []);
   useEffect(() => { localStorage.setItem(key, JSON.stringify(book)); setSaved(true); const timer = window.setTimeout(() => setSaved(false), 1600); return () => window.clearTimeout(timer); }, [book]);
   const update = (field: keyof Notebook, value: string | string[] | number[] | Idea[] | Record<string, string>) => setBook((current) => ({ ...current, [field]: value }));
   const addQuestion = (question: string) => {
