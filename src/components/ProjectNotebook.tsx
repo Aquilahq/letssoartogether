@@ -20,8 +20,9 @@ const freshNotebook: Notebook = {
 };
 
 const cleanBrainDump = (value: string) => value
-  .replace(/\\n(?:Question|Q):\\s*/g, "\\n")
-  .replace(/\\n(?:Answer|A):\\s*/g, "\\n");
+  .replace(/\\n(?:Question|Q):\\s*/g, "\n")
+  .replace(/\\n(?:Answer|A):\\s*/g, "\n")
+  .replace(/\\n/g, "\n");
 
 const pages = [
   { id: "start", label: "Start here" }, { id: "dump", label: "Brain dump" },
@@ -94,11 +95,12 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
   useEffect(() => { try { const savedBook = localStorage.getItem(key); if (savedBook) { const parsed = JSON.parse(savedBook); setBook({ ...freshNotebook, ...parsed, brainDump: cleanBrainDump(parsed.brainDump || ""), path: Array.isArray(parsed.path) ? parsed.path : parsed.path ? [parsed.path] : [] }); } } catch { /* a clean notebook is a good fallback */ } }, []);
   useEffect(() => { localStorage.setItem(key, JSON.stringify(book)); setSaved(true); const timer = window.setTimeout(() => setSaved(false), 1600); return () => window.clearTimeout(timer); }, [book]);
   const update = (field: keyof Notebook, value: string | string[] | number[] | Idea[]) => setBook((current) => ({ ...current, [field]: value }));
-  const addQuestion = (question: string, source = "Idea seed") => {
-    setPrompt(question);
-    setBook((current) => ({ ...current, brainDump: `${current.brainDump.trimEnd()}${current.brainDump.trim() ? "\\n\\n" : ""}${source}\\n${question}\\n` }));
+  const addQuestion = (question: string) => {
+    const cleanQuestion = `${question.replace(/[\\/]/g, "").trim().replace(/[.!?]+$/, "")}?`;
+    setPrompt(cleanQuestion);
+    setBook((current) => ({ ...current, brainDump: `${current.brainDump.trimEnd()}${current.brainDump.trim() ? "\n\n" : ""}${cleanQuestion}` }));
   };
-  const askPrompt = (action: string) => addQuestion(promptForAction(action), action);
+  const askPrompt = (action: string) => addQuestion(promptForAction(action));
   const clearInformation = () => {
     if (!window.confirm("Clear all written information from this notebook? This cannot be undone.")) return;
     setBook((current) => ({
