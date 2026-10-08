@@ -208,7 +208,7 @@ const ContactPanel = ({ onClose, book }: { onClose: () => void; book: Notebook }
   const send = async () => {
     setSending(true); setError("");
     try {
-      const response = await fetch("/api/send-notebook", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, company, email, phone, preferred, notebook: book }) });
+      const response = await fetch("/api/send-notebook", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name, company, email, phone, preferred, origin: "/project-notebook", notebook: book }) });
       const result = await response.json() as { ok?: boolean; error?: string };
       if (!response.ok || !result.ok) throw new Error(result.error || "Unable to send the notebook.");
       setSent(true);
