@@ -1,4 +1,8 @@
 /* Notebook-specific styles. The site shell is full-bleed; page layout is owned by Tailwind components. */
+/* Hero headline emphasis */
+.change-word { display:inline-block; color:#000814; animation:change-to-blue 24s ease-in-out forwards; }
+@keyframes change-to-blue { 0%,16% { color:#000814; } 78%,100% { color:hsl(var(--primary)); } }
+
 /* Creative Project Notebook */
 .creative-notebook { --ink:#1d2b3a; --muted:#687786; --paper:#fffdf8; --line:#e8e3d9; --peach:#f6d8c9; --blue:#dce9ef; --yellow:#f8edb8; background:#f2eee7; color:var(--ink); padding:clamp(3rem,8vw,8rem) 1rem; text-align:left; }
 .creative-notebook.standalone { min-height:100vh; padding:clamp(.75rem,2vw,2rem); background:radial-gradient(circle at 15% 0%,#e9f0f1 0,#f2eee7 38%,#ece7df 100%); }
