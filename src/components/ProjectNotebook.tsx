@@ -190,9 +190,15 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
     URL.revokeObjectURL(url);
   };
   const viewXml = () => {
-    const url = URL.createObjectURL(new Blob([notebookToHtml(book)], { type: "text/html;charset=utf-8" }));
-    window.open(url, "_blank", "noopener,noreferrer");
-    window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+    const viewer = window.open("", "_blank");
+    if (!viewer) {
+      window.alert("Please allow pop-ups for letssoartogether.com to view your Vision Lab file.");
+      return;
+    }
+    viewer.document.open();
+    viewer.document.write(notebookToHtml(book));
+    viewer.document.close();
+    viewer.focus();
   };
   const loadXml = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
