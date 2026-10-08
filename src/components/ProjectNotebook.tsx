@@ -59,29 +59,26 @@ const notebookFromXml = (xml: string): Notebook => {
   };
 };
 const notebookToXml = (book: Notebook) => {
-  const field = (name: string, value: string) => `    <${name}>${xmlEscape(value || "")}</${name}>`;
-  const list = (name: string, values: string[]) => [`    <${name}>`, ...values.map((value) => `      <item>${xmlEscape(value)}</item>`), `    </${name}>`];
-  const perspectives = Object.entries(book.perspectiveAnswers || {}).flatMap(([name, answer]) => [`      <perspective name="${xmlEscape(name)}">${xmlEscape(answer)}</perspective>`]);
-  return [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<discoveryJourney version="1.0">',
-    '  <metadata>',
-    '    <title>Let&apos;s Soar Together Discovery Journey</title>',
-    '    <format>Vision Lab file</format>',
-    '    <website>https://letssoartogether.com</website>',
-    '    <contact>hello@letssoartogether.com</contact>',
-    `    <savedAt>${new Date().toISOString()}</savedAt>`,
-    '  </metadata>',
-    '  <answers>',
-    field("brainDump", book.brainDump), field("why", book.why), field("problem", book.problem),
-    field("who", book.who), field("currentState", book.current), field("vision", book.vision),
-    field("partners", book.partners), field("nextStep", book.nextStep), field("when", book.when),
-    '    <perspectiveAnswers>', ...perspectives, '    </perspectiveAnswers>',
-    '  </answers>',
-    ...list("paths", book.path), ...list("thinkingStyles", book.styles), ...list("roadblocks", book.roadblocks),
-    '  <ideas>', ...book.ideas.flatMap((idea) => [`    <idea category="${xmlEscape(idea.category)}" selected="${book.selected.includes(idea.id)}">`, `      <title>${xmlEscape(idea.title)}</title>`, `      <text>${xmlEscape(idea.text)}</text>`, '    </idea>']), '  </ideas>',
-    '</discoveryJourney>',
-  ].join("\n");
+  const xmlDocument = document.implementation.createDocument(null, "discoveryJourney");
+  const root = xmlDocument.documentElement;
+  root.setAttribute("version", "1.0");
+  const add = (parent: Element, name: string, value = "") => { const element = xmlDocument.createElement(name); element.textContent = value || ""; parent.appendChild(element); return element; };
+  const addList = (name: string, values: string[]) => { const group = add(root, name); values.forEach((value) => add(group, "item", value)); };
+  const metadata = add(root, "metadata");
+  add(metadata, "title", "Let's Soar Together Discovery Journey"); add(metadata, "format", "Vision Lab file"); add(metadata, "website", "https://letssoartogether.com"); add(metadata, "contact", "hello@letssoartogether.com"); add(metadata, "savedAt", new Date().toISOString());
+  const answers = add(root, "answers");
+  [["brainDump", book.brainDump], ["why", book.why], ["problem", book.problem], ["who", book.who], ["currentState", book.current], ["vision", book.vision], ["partners", book.partners], ["nextStep", book.nextStep], ["when", book.when]].forEach(([name, value]) => add(answers, name, value));
+  const perspectiveAnswers = add(answers, "perspectiveAnswers");
+  Object.entries(book.perspectiveAnswers || {}).forEach(([name, answer]) => { const perspective = add(perspectiveAnswers, "perspective", answer); perspective.setAttribute("name", name); });
+  addList("paths", book.path); addList("thinkingStyles", book.styles); addList("roadblocks", book.roadblocks);
+  const ideas = add(root, "ideas");
+  book.ideas.forEach((idea) => { const element = add(ideas, "idea"); element.setAttribute("category", idea.category); element.setAttribute("selected", String(book.selected.includes(idea.id))); add(element, "title", idea.title); add(element, "text", idea.text); });
+  const serialized = new XMLSerializer().serializeToString(xmlDocument);
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+${serialized}`;
+  const validation = new DOMParser().parseFromString(xml, "application/xml");
+  if (validation.getElementsByTagName("parsererror").length || validation.documentElement.localName !== "discoveryJourney") throw new Error("Unable to create a valid Vision Lab XML file.");
+  return xml;
 };
 
 const pages = [
