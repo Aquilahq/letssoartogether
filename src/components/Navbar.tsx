@@ -4,9 +4,9 @@ import { ArrowUpRight, Menu, Phone, X } from "lucide-react";
 import aquilaLogo from "@/assets/aquila-watermark-hd.png";
 
 const links = [
-  { label: "About Aquila", href: "#about-aquila" },
+  { label: "About", href: "#about-aquila" },
   { label: "Services", href: "#services" },
-  { label: "Our work", href: "#work" },
+  { label: "Work", href: "#work" },
   { label: "Vision Lab", href: "#project-notebook" },
   { label: "Start", href: "/start" },
 ];
