@@ -19,10 +19,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!context.env.RESEND_API_KEY) return json({ error: "Email delivery is not configured yet." }, 503);
 
     const notebook = input.notebook || {};
+    const perspectiveAnswers = notebook.perspectiveAnswers && typeof notebook.perspectiveAnswers === "object" ? JSON.stringify(notebook.perspectiveAnswers) : "Not recorded";
+    const ideas = Array.isArray(notebook.ideas) ? notebook.ideas.map((idea) => typeof idea === "object" ? JSON.stringify(idea) : String(idea)).join("\n") : "Not recorded";
     const lines = [
       `Origin: ${input.origin || "Not specified"}`, `Name: ${input.name.trim()}`, `Company: ${input.company || "Not provided"}`,  `Email: ${input.email.trim()}`, `Phone: ${input.phone || "Not provided"}`, `Preferred contact: ${input.preferred || "Email"}`, "",
-      "PROJECT NOTEBOOK", `Path: ${notebook.path || "Not selected"}`, `Thinking style: ${Array.isArray(notebook.styles) ? notebook.styles.join(", ") : "Not selected"}`, "",
-      "Message:", String(input.message || "Not provided"), "", "Brain Dump:", String(notebook.brainDump || ""), "", "Why it matters:", String(notebook.why || ""), "", "The problem:", String(notebook.problem || ""), "", "Who it helps:", String(notebook.who || ""), "", "Vision:", String(notebook.vision || ""), "", "Partners:", String(notebook.partners || ""), "", "Next step:", String(notebook.nextStep || ""), `When: ${notebook.when || "Not selected"}`, `Terms accepted: ${notebook.termsAcceptedAt || "Not recorded"}`, 
+      "PROJECT NOTEBOOK", `Path: ${Array.isArray(notebook.path) ? notebook.path.join(", ") : notebook.path || "Not selected"}`, `Thinking style: ${Array.isArray(notebook.styles) ? notebook.styles.join(", ") : "Not selected"}`, `Selected perspectives: ${perspectiveAnswers}`, `Selected ideas:\n${ideas}`, `Roadblocks: ${Array.isArray(notebook.roadblocks) ? notebook.roadblocks.join(", ") : "Not selected"}`, "",
+      "Message:", String(input.message || "Not provided"), "", "Brain Dump:", String(notebook.brainDump || ""), "", "Why it matters:", String(notebook.why || ""), "", "The problem:", String(notebook.problem || ""), "", "Who it helps:", String(notebook.who || ""), "", "Vision:", String(notebook.vision || ""), "", "Current state:", String(notebook.current || ""), "", "Desired change:", String(notebook.change || ""), "", "Partners:", String(notebook.partners || ""), "", "Next step:", String(notebook.nextStep || ""), `When: ${notebook.when || "Not selected"}`, `Terms accepted: ${notebook.termsAcceptedAt || "Not recorded"}`, 
     ];
     const text = lines.join("\n").slice(0, 30000);
     const html = `<div style="font-family:Arial,sans-serif;line-height:1.6;white-space:pre-wrap">${text.replace(/[&<>]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[char] || char))}</div>`;
