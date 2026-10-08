@@ -19,6 +19,10 @@ const freshNotebook: Notebook = {
   change: "", ideas: [], selected: [], termsAcceptedAt: "",
 };
 
+const cleanBrainDump = (value: string) => value
+  .replace(/\\nQuestion:\\s*/g, "\\nQ: ")
+  .replace(/\\nAnswer:\\s*/g, "\\nA: ");
+
 const pages = [
   { id: "start", label: "Start here" }, { id: "dump", label: "Brain dump" },
   { id: "why", label: "The why" }, { id: "problem", label: "The problem" },
@@ -44,6 +48,14 @@ const promptForAction = (action: string) => {
   return prompts[Math.floor(Math.random() * prompts.length)];
 };
 const perspectives = ["The Customer", "The Beginner", "The Expert", "The Skeptic", "The Child", "The Investor", "The Competitor", "The Community", "The Future You"];
+const ideaSeeds = [
+  "What small detail could make this more useful or memorable?",
+  "What would someone say after this helped them?",
+  "What is the simplest version you could try today?",
+  "What unexpected connection or analogy brings this idea to life?",
+  "What would you build if you had to make it playful?",
+  "Who could contribute a perspective you have not heard yet?",
+];
 const roadblocks = ["I don't know where to start", "Money", "Technology", "Time", "Knowledge", "Marketing", "Design", "Finding customers", "Finding partners", "Confidence", "Team", "Too many ideas", "I'm doing this alone", "Something else"];
 const categories = ["Love this", "Explore this", "Question", "Problem", "Opportunity", "Needs research", "Later"];
 const key = "lets-soar-creative-notebook";
@@ -79,14 +91,14 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
     observer.observe(node);
     return () => observer.disconnect();
   }, []);
-  useEffect(() => { try { const savedBook = localStorage.getItem(key); if (savedBook) { const parsed = JSON.parse(savedBook); setBook({ ...freshNotebook, ...parsed, path: Array.isArray(parsed.path) ? parsed.path : parsed.path ? [parsed.path] : [] }); } } catch { /* a clean notebook is a good fallback */ } }, []);
+  useEffect(() => { try { const savedBook = localStorage.getItem(key); if (savedBook) { const parsed = JSON.parse(savedBook); setBook({ ...freshNotebook, ...parsed, brainDump: cleanBrainDump(parsed.brainDump || ""), path: Array.isArray(parsed.path) ? parsed.path : parsed.path ? [parsed.path] : [] }); } } catch { /* a clean notebook is a good fallback */ } }, []);
   useEffect(() => { localStorage.setItem(key, JSON.stringify(book)); setSaved(true); const timer = window.setTimeout(() => setSaved(false), 1600); return () => window.clearTimeout(timer); }, [book]);
   const update = (field: keyof Notebook, value: string | string[] | number[] | Idea[]) => setBook((current) => ({ ...current, [field]: value }));
-  const askPrompt = (action: string) => {
-    const question = promptForAction(action);
+  const addQuestion = (question: string, source = "Idea seed") => {
     setPrompt(question);
-    setBook((current) => ({ ...current, brainDump: `${current.brainDump.trimEnd()}${current.brainDump.trim() ? "\\n\\n" : ""}${action}\\nQuestion: ${question}\\nAnswer:\\n` }));
+    setBook((current) => ({ ...current, brainDump: `${current.brainDump.trimEnd()}${current.brainDump.trim() ? "\\n\\n" : ""}${source}\\nQ: ${question}\\nA: ` }));
   };
+  const askPrompt = (action: string) => addQuestion(promptForAction(action), action);
   const pageIndex = pages.findIndex((item) => item.id === page);
   const go = (id: string) => { setPage(id); setMenuOpen(false); window.setTimeout(() => document.querySelector(".notebook-stage")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0); };
   const next = () => go(pages[Math.min(pageIndex + 1, pages.length - 1)].id);
@@ -132,7 +144,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
           {page !== "summary" && <div className="answer-guidance"><Sparkles size={14} /><span><strong>Helpful hint:</strong> Your answer becomes one line in your final mission statement. A few honest words are enough—“I’m not sure yet” is a useful answer too.</span></div>}
           <div className="page-kicker"><span>Page {String(pageIndex + 1).padStart(2, "0")}</span><span>{pageTitle}</span></div>
           {page === "start" && <StartPage book={book} update={update} go={go} />}
-          {page === "dump" && <><PageIntro eyebrow={journey.dump[0]} title="Brain Dump" text={journey.dump[1]} /><div className="dont-judge"><Sparkles size={16} /> Don&apos;t judge the idea yet. Put it on the page first.</div><div className="answer-guidance"><Sparkles size={14} /><span><strong>How to use this page:</strong> Type directly in the brain dump. The buttons below are optional idea starters—they add a question for you to answer here. Choose one, then keep typing underneath <strong>Answer:</strong>.</span></div>{prompt && <div className="prompt-card"><Sparkles size={17} /><span><strong>Answer this question in your brain dump:</strong> {prompt}</span><button onClick={() => setPrompt("")} aria-label="Close current question"><X size={15} /></button></div>}<textarea className="notebook-writing huge" value={book.brainDump} onChange={(e) => update("brainDump", e.target.value)} placeholder="Start anywhere... a feeling, a question, a half-formed thought..." /><div className="prompt-actions">{["Ask me a question", "Give me another angle", "Challenge my thinking", "Make me think bigger", "Make me simplify it", "What am I missing?", "Give me a crazy question"].map((item) => <button key={item} onClick={() => askPrompt(item)}>{item}</button>)}</div><div className="card-capture"><div><span className="eyebrow">See something worth keeping?</span><strong>Save a thought to your Idea Wall</strong></div><div className="inline-capture"><input value={draftIdea} onChange={(e) => setDraftIdea(e.target.value)} placeholder="A thought worth remembering..." /><button onClick={saveCard}><Plus size={16} /> Save idea</button></div></div></>}
+          {page === "dump" && <><PageIntro eyebrow={journey.dump[0]} title="Brain Dump" text={journey.dump[1]} /><div className="dont-judge"><Sparkles size={16} /> Don&apos;t judge the idea yet. Put it on the page first.</div><div className="answer-guidance"><Sparkles size={14} /><span><strong>How to use this page:</strong> Type directly in the brain dump. The buttons below are optional idea starters—they add a prompt in <strong>Q:</strong> and leave an <strong>A:</strong> for your response.</span></div><div className="idea-seeds"><div className="idea-seeds-heading"><Lightbulb size={16} /><strong>Need a spark?</strong><span>Choose any question to add it to your brain dump.</span></div><div className="idea-seeds-list">{ideaSeeds.slice(0, 4).map((seed) => <button key={seed} onClick={() => addQuestion(seed)}><Lightbulb size={14} />{seed}</button>)}</div></div>{prompt && <div className="prompt-card"><Sparkles size={17} /><span><strong>Q:</strong> {prompt}<br /><strong>A:</strong> Continue writing in the brain dump below.</span><button onClick={() => setPrompt("")} aria-label="Close current question"><X size={15} /></button></div>}<textarea className="notebook-writing huge" value={book.brainDump} onChange={(e) => update("brainDump", e.target.value)} placeholder="Start anywhere... a feeling, a question, a half-formed thought..." /><div className="prompt-actions">{["Ask me a question", "Give me another angle", "Challenge my thinking", "Make me think bigger", "Make me simplify it", "What am I missing?", "Give me a crazy question"].map((item) => <button key={item} onClick={() => askPrompt(item)}>{item}</button>)}</div><div className="card-capture"><div><span className="eyebrow">See something worth keeping?</span><strong>Save a thought to your Idea Wall</strong></div><div className="inline-capture"><input value={draftIdea} onChange={(e) => setDraftIdea(e.target.value)} placeholder="A thought worth remembering..." /><button onClick={saveCard}><Plus size={16} /> Save idea</button></div></div></>}
           {page === "why" && <><PageIntro eyebrow="Follow the energy" title={journey.why[0]} text={journey.why[1]} /><Question label="What made you think about it in the first place?" value={book.why} onChange={(v) => update("why", v)} /><Question label="Who would this help?" value={book.who} onChange={(v) => update("who", v)} /><Question label="If this worked exactly the way you imagine, what would change?" value={book.current} onChange={(v) => update("current", v)} /></>}
           {page === "problem" && <><PageIntro eyebrow="Look a little closer" title={journey.problem[0]} text={journey.problem[1]} /><Question label="What problem are you trying to solve?" value={book.problem} onChange={(v) => update("problem", v)} /><Question label="How are people solving it now, and what frustrates you about that?" value={book.change} onChange={(v) => update("change", v)} /><div className="why-box"><strong>Try the Five Whys</strong><p>Choose something you wrote, then ask: <em>Why does that matter?</em> Keep going only while it helps.</p><button className="text-button" onClick={() => setPrompt("Why does that matter?")}>Start with a why <ArrowRight size={15} /></button></div></>}
           {page === "explore" && <ExplorePage book={book} update={update} perspectives={perspectives} prompt={prompt} setPrompt={setPrompt} />}
