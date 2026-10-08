@@ -123,6 +123,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
   const [prompt, setPrompt] = useState("");
   const [showContact, setShowContact] = useState(false);
   const [showStuckGuide, setShowStuckGuide] = useState(false);
+  const [showXmlViewer, setShowXmlViewer] = useState(false);
   const [printEntireNotebook, setPrintEntireNotebook] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -189,17 +190,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
     link.click();
     URL.revokeObjectURL(url);
   };
-  const viewXml = () => {
-    const viewer = window.open("", "_blank");
-    if (!viewer) {
-      window.alert("Please allow pop-ups for letssoartogether.com to view your Vision Lab file.");
-      return;
-    }
-    viewer.document.open();
-    viewer.document.write(notebookToHtml(book));
-    viewer.document.close();
-    viewer.focus();
-  };
+  const viewXml = () => setShowXmlViewer(true);
   const loadXml = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -252,6 +243,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
           {page === "next" && <><PageIntro eyebrow="Make it yours" title={journey.next[0]} text={journey.next[1]} /><div className="choice-grid">{roadblocks.map((item) => <button key={item} className={book.roadblocks.includes(item) ? "selected" : ""} onClick={() => toggleRoadblock(item)}>{book.roadblocks.includes(item) && <Check size={15} />}{item}</button>)}</div><div className="partnership"><PageIntro eyebrow="You don't have to build alone" title="Who would help this idea grow?" text="What do you already do well? What part would you rather not do yourself?" /><textarea className="notebook-writing" value={book.partners} onChange={(e) => update("partners", e.target.value)} placeholder="A designer, developer, strategist, mentor... or someone who just gets it." /><div className="next-step"><span className="eyebrow">One small step</span><Question label="What is one thing you could do next?" value={book.nextStep} onChange={(v) => update("nextStep", v)} compact /><div className="choice-row">{["Today", "This week", "This month", "I'm still thinking"].map((item) => <button key={item} className={book.when === item ? "selected" : ""} onClick={() => update("when", item)}>{item}</button>)}</div></div></div></>}
           {page === "summary" && <><Summary book={book} onShare={() => { setShowContact(true); }} onPrintEntire={printEntire} onDownloadXml={downloadXml} /><div className="mt-8 rounded-2xl border border-primary/20 bg-primary/5 p-5 text-center"><strong className="block font-display text-xl">Ready to build this with Aquila?</strong><a href="/work-with-aquila" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary">Explore Working With Aquila →</a></div></>}
           {showContact && <ContactPanel onClose={() => setShowContact(false)} book={book} />}
+          {showXmlViewer && <div className="xml-viewer-overlay"><div className="xml-viewer-panel"><button className="close-panel" onClick={() => setShowXmlViewer(false)} aria-label="Close Vision Lab viewer"><X size={20} /></button><iframe title="Formatted Vision Lab file" srcDoc={notebookToHtml(book)} /></div></div>}
           {showStuckGuide && <StuckGuide onClose={() => setShowStuckGuide(false)} onSave={(note) => { update("brainDump", note); setShowStuckGuide(false); go("dump"); }} />}
           {page !== "summary" && <div className="notebook-nav" aria-label="Discovery journey navigation"><button onClick={back} disabled={pageIndex === 0}><ArrowLeft size={16} /> {pageIndex === 0 ? "Back" : `Back to ${pages[pageIndex - 1].label}`}</button><span className="journey-step">Step {pageIndex + 1} of {pages.length}</span><button className="stuck" onClick={stuck}><Sparkles size={15} /> I&apos;m stuck</button><button className="next-button" onClick={next}>{pageIndex === pages.length - 1 ? "Finish" : `Next: ${pages[pageIndex + 1].label}`}<ArrowRight size={16} /></button></div>}
         </main>
