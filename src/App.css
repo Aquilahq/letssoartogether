@@ -2,6 +2,8 @@
 /* Hero headline emphasis */
 .change-word { display:inline-block; color:#000814; animation:change-to-blue 24s ease-in-out forwards; }
 @keyframes change-to-blue { 0%,16% { color:#000814; } 78%,100% { color:hsl(var(--primary)); } }
+.life-word { display:inline-block; transform-origin:50% 100%; animation:life-rise 8s cubic-bezier(.22,1,.36,1) both; }
+@keyframes life-rise { 0%,18% { clip-path:inset(100% 0 0 0); opacity:.2; transform:translateY(28%) scaleY(.35); } 72% { clip-path:inset(0 0 0 0); opacity:1; transform:translateY(0) scaleY(1); } 100% { clip-path:inset(0 0 0 0); opacity:1; transform:translateY(0) scaleY(1); } }
 
 /* Creative Project Notebook */
 .creative-notebook { --ink:#1d2b3a; --muted:#687786; --paper:#fffdf8; --line:#e8e3d9; --peach:#f6d8c9; --blue:#dce9ef; --yellow:#f8edb8; background:#f2eee7; color:var(--ink); padding:clamp(3rem,8vw,8rem) 1rem; text-align:left; }

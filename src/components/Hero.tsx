@@ -18,7 +18,11 @@ const taglines = [
   "This is where possibility becomes momentum.",
 ];
 
-const renderTagline = (text: string) => text.split(/(change)/gi).map((part, index) => part.toLowerCase() === "change" ? <span key={`${part}-${index}`} className="change-word">{part}</span> : part);
+const renderTagline = (text: string) => text.split(/(change|life)/gi).map((part, index) => {
+  if (part.toLowerCase() === "change") return <span key={`${part}-${index}`} className="change-word">{part}</span>;
+  if (part.toLowerCase() === "life") return <span key={`${part}-${index}`} className="life-word">{part}</span>;
+  return part;
+});
 
 const Hero = ({ heroImage }: HeroProps) => {
   const [tagline, setTagline] = useState(() => taglines[Math.floor(Math.random() * taglines.length)]);
