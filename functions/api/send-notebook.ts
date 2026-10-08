@@ -19,10 +19,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!context.env.RESEND_API_KEY) return json({ error: "Email delivery is not configured yet." }, 503);
 
     const notebook = input.notebook || {};
+    const origin = String(input.origin || "").trim();
+    const originLabel = origin.includes("/project-notebook") || origin.includes("/vision-lab") ? "Vision Lab — Project Notebook" : origin.includes("/start/quick-information") ? "Start page — just a little information" : origin.includes("/contact") ? "Contact section" : origin || "Unspecified site section";
     const perspectiveAnswers = notebook.perspectiveAnswers && typeof notebook.perspectiveAnswers === "object" ? JSON.stringify(notebook.perspectiveAnswers) : "Not recorded";
     const ideas = Array.isArray(notebook.ideas) ? notebook.ideas.map((idea) => typeof idea === "object" ? JSON.stringify(idea) : String(idea)).join("\n") : "Not recorded";
     const lines = [
-      `Origin: ${input.origin || "Not specified"}`, `Name: ${input.name.trim()}`, `Company: ${input.company || "Not provided"}`,  `Email: ${input.email.trim()}`, `Phone: ${input.phone || "Not provided"}`, `Preferred contact: ${input.preferred || "Email"}`, "",
+      `Origin: ${originLabel}`, `Name: ${input.name.trim()}`, `Company: ${input.company || "Not provided"}`,  `Email: ${input.email.trim()}`, `Phone: ${input.phone || "Not provided"}`, `Preferred contact: ${input.preferred || "Email"}`, "",
       "PROJECT NOTEBOOK", `Path: ${Array.isArray(notebook.path) ? notebook.path.join(", ") : notebook.path || "Not selected"}`, `Thinking style: ${Array.isArray(notebook.styles) ? notebook.styles.join(", ") : "Not selected"}`, `Selected perspectives: ${perspectiveAnswers}`, `Selected ideas:\n${ideas}`, `Roadblocks: ${Array.isArray(notebook.roadblocks) ? notebook.roadblocks.join(", ") : "Not selected"}`, "",
       "Message:", String(input.message || "Not provided"), "", "Brain Dump:", String(notebook.brainDump || ""), "", "Why it matters:", String(notebook.why || ""), "", "The problem:", String(notebook.problem || ""), "", "Who it helps:", String(notebook.who || ""), "", "Vision:", String(notebook.vision || ""), "", "Current state:", String(notebook.current || ""), "", "Desired change:", String(notebook.change || ""), "", "Partners:", String(notebook.partners || ""), "", "Next step:", String(notebook.nextStep || ""), `When: ${notebook.when || "Not selected"}`, `Terms accepted: ${notebook.termsAcceptedAt || "Not recorded"}`, 
     ];
@@ -31,7 +33,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: input.email.trim(), subject: `${input.subject || "Vision Lab | Project Notebook"} | Origin: ${input.origin || "unspecified"} | ${input.name.trim()}`, text, html }),
+      body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: input.email.trim(), subject: `${input.subject || "Vision Lab | Project Notebook"} | From: ${originLabel} | ${input.name.trim()}`, text, html }),
     });
     const result = await response.json() as { id?: string; message?: string };
     if (!response.ok || !result.id) return json({ error: result.message || "Email delivery failed." }, 502);

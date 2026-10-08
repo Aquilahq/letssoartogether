@@ -7,12 +7,13 @@ const Brainstorm = () => {
   const [idea, setIdea] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
-  useEffect(() => { setIdea(localStorage.getItem("soar-vision") || ""); }, []);
+  useEffect(() => { setIdea(localStorage.getItem("soar-vision") || ""); try { setSelected(JSON.parse(localStorage.getItem("soar-vision-selections") || "[]")); } catch { /* keep empty selections */ } }, []);
+  useEffect(() => { localStorage.setItem("soar-vision-selections", JSON.stringify(selected)); }, [selected]);
   const toggle = (item: string) => setSelected((current) => current.includes(item) ? current.filter((x) => x !== item) : [...current, item]);
   const saveIdea = () => { localStorage.setItem("soar-vision", idea); setSaved(true); setTimeout(() => setSaved(false), 2500); };
   const sendBrief = () => {
-    const body = `My big idea:\n${idea}\n\nI want help with:\n${selected.join(", ") || "I am still exploring"}`;
-    window.location.href = `mailto:hello@letssoartogether.com?subject=${encodeURIComponent("Let's Soar Together — my project idea")}&body=${encodeURIComponent(body)}`;
+    const body = `Where this came from: Vision Lab — Brainstorm starter section\nMy big idea:\n${idea}\n\nI want help with:\n${selected.join(", ") || "I am still exploring"}`;
+    window.location.href = `mailto:hello@letssoartogether.com?subject=${encodeURIComponent("From the Vision Lab — my project idea")}&body=${encodeURIComponent(body)}`;
   };
   return <section id="vision-lab" className="depth-section vision-depth bg-primary py-24 text-primary-foreground">
     <div className="container mx-auto grid gap-12 px-6 md:grid-cols-[0.8fr_1.2fr] md:px-12">
