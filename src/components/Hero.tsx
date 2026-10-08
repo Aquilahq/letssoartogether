@@ -18,7 +18,7 @@ const taglines = [
   "This is where possibility becomes momentum.",
 ];
 
-const renderTagline = (text: string) => text.split(/(change)/gi).map((part, index) => part.toLowerCase() === "change" ? <motion.span key={`${part}-${index}`} className="inline-block" animate={{ rotate: [0, 360, 720, 360, 0], rotateY: [0, 180, 360], y: [0, 18, 0, -8, 0], color: ["#000814", "#b45309", "#0f766e", "#7c3aed", "#000814"] }} transition={{ duration: 3.6, ease: "easeInOut", repeat: Infinity, repeatDelay: 1.2 }}>{part}</motion.span> : part);
+const renderTagline = (text: string) => text.split(/(change)/gi).map((part, index) => part.toLowerCase() === "change" ? <motion.span key={`${part}-${index}`} className="inline-block" animate={{ clipPath: ["inset(0 0 0 0)", "inset(7% 0 7% 0)", "inset(0 0 0 0)"], color: ["#000814", "#334155", "#000814"] }} transition={{ duration: 4.8, ease: "easeInOut", repeat: Infinity, repeatDelay: 3 }}>{part}</motion.span> : part);
 
 const Hero = ({ heroImage }: HeroProps) => {
   const [tagline, setTagline] = useState(() => taglines[Math.floor(Math.random() * taglines.length)]);
