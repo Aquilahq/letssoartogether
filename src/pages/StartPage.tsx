@@ -1,7 +1,30 @@
+import { FormEvent, useEffect, useState } from "react";
 import { ArrowRight, Monitor, Smartphone } from "lucide-react";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Seo, { aquilaOrganization } from "../components/Seo";
+
+const QuickInformationForm = () => {
+  const [form, setForm] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("letssoartogether-quick-information") || "{}"); } catch { return {}; }
+  });
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => { localStorage.setItem("letssoartogether-quick-information", JSON.stringify({ ...form, choice: "just-a-little-information" })); }, [form]);
+  const update = (field: string, value: string) => setForm((current: Record<string, string>) => ({ ...current, [field]: value }));
+  const send = async (event: FormEvent) => {
+    event.preventDefault(); setSending(true); setError("");
+    try {
+      const response = await fetch("/api/send-notebook", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...form, origin: "/start/quick-information", subject: "Start | Just a little information", notebook: { path: ["Just a little information"] } }) });
+      const result = await response.json() as { ok?: boolean; error?: string };
+      if (!response.ok || !result.ok) throw new Error(result.error || "Unable to send your information.");
+      setSent(true);
+    } catch (caught) { setError(caught instanceof Error ? caught.message : "Unable to send your information."); }
+    finally { setSending(false); }
+  };
+  return <section id="quick-information" className="mt-12 scroll-mt-8 rounded-3xl border border-primary/25 bg-primary/5 p-6 md:p-8"><p className="eyebrow">A simpler way forward</p><h2 className="mt-3 font-display text-3xl font-bold">I just want to give you a little bit of information.</h2><p className="mt-3 max-w-2xl text-muted-foreground">That&apos;s enough to start. Send a few details and we&apos;ll take the next step together—no long application required.</p>{sent ? <p className="mt-6 rounded-2xl bg-background p-5 font-semibold text-primary">Thank you. Your information has been sent, and your choice was saved.</p> : <form onSubmit={send} className="mt-6 grid gap-4 md:grid-cols-2"><label className="text-sm font-semibold">Your name<input required value={form.name || ""} onChange={(event) => update("name", event.target.value)} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 font-normal" placeholder="Your name" /></label><label className="text-sm font-semibold">Email<input required type="email" value={form.email || ""} onChange={(event) => update("email", event.target.value)} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 font-normal" placeholder="you@example.com" /></label><label className="text-sm font-semibold md:col-span-2">A little bit about what you&apos;d like to do<textarea value={form.message || ""} onChange={(event) => update("message", event.target.value)} className="mt-2 min-h-28 w-full rounded-xl border border-border bg-background px-4 py-3 font-normal" placeholder="Tell me just enough to know where to begin." /></label>{error && <p className="md:col-span-2 text-sm font-semibold text-destructive">{error}</p>}<button type="submit" disabled={sending} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground disabled:opacity-50 md:col-span-2 md:justify-self-start">{sending ? "Sending…" : "Let’s move forward"}<ArrowRight size={17} /></button></form>}</section>;
+};
 
 const StartPage = () => (
   <div className="site-shell min-h-screen bg-background text-foreground">
@@ -21,7 +44,7 @@ const StartPage = () => (
         <h1 className="mt-4 max-w-4xl font-display text-5xl font-bold leading-tight md:text-7xl">Let&apos;s Soar Together™ starts wherever you are.</h1>
         <p className="mt-8 max-w-3xl text-xl leading-relaxed text-muted-foreground">This is not a contact form. It is a journey for people with ideas, dreams, problems to solve, businesses to build, or a feeling that they need to move forward but do not know where to begin.</p>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           <Link to="/vision-lab" className="group rounded-2xl border border-border bg-card p-7 shadow-sm transition-transform hover:-translate-y-1">
             <p className="eyebrow">Something is already taking shape</p>
             <h2 className="mt-3 font-display text-2xl font-bold">Help me turn it into something real.</h2>
@@ -40,7 +63,14 @@ const StartPage = () => (
             <p className="mt-3 text-muted-foreground">You have started, but momentum is harder to find. Bring the messy middle and we&apos;ll help you untangle the next move.</p>
             <span className="mt-6 inline-flex items-center gap-2 font-semibold text-primary">Find my next move <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" /></span>
           </Link>
+          <a href="#quick-information" className="group rounded-2xl border border-primary/30 bg-primary/5 p-7 shadow-sm transition-transform hover:-translate-y-1">
+            <p className="eyebrow">I want to keep it simple</p>
+            <h2 className="mt-3 font-display text-2xl font-bold">I just want to give you a little bit of information.</h2>
+            <p className="mt-3 text-muted-foreground">No long application. Share a few details and let&apos;s move forward.</p>
+            <span className="mt-6 inline-flex items-center gap-2 font-semibold text-primary">Let&apos;s move forward <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" /></span>
+          </a>
         </div>
+        <QuickInformationForm />
 
         <div className="mt-16 border-t border-border pt-10">
           <h2 className="font-display text-3xl font-bold">Built for the way ideas move.</h2>
