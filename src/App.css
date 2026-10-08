@@ -62,16 +62,20 @@ body.vision-lab-open { overflow:hidden; }
   #project-notebook { position:absolute; inset:0; width:100%; padding:0; background:#fff; }
   #project-notebook .notebook-wrap { max-width:none; border:0; box-shadow:none; opacity:1; transform:none; }
   #project-notebook .notebook-header, #project-notebook .notebook-progress, #project-notebook .journey-progress-pages, #project-notebook .notebook-sidebar, #project-notebook .page-kicker, #project-notebook .notebook-nav, #project-notebook .summary-actions, #project-notebook .contact-overlay, #project-notebook .stuck-overlay { display:none !important; }
-  #project-notebook.print-entire .print-notebook-heading, #project-notebook.print-entire .page-intro, #project-notebook.print-entire .summary-paper { display:none !important; }
-  #project-notebook.print-entire .full-notebook-print { display:block !important; }
-  #project-notebook.print-entire .full-notebook-print .print-branding { display:grid; gap:3px; margin-bottom:24px; padding-bottom:14px; border-bottom:2px solid #1d2b3a; color:#1d2b3a; }
-  #project-notebook.print-entire .full-notebook-print .print-branding strong { font:600 15pt 'Space Grotesk', sans-serif; }
-  #project-notebook.print-entire .full-notebook-print .print-branding span, #project-notebook.print-entire .full-notebook-print .print-branding small { color:#9a714f; font:700 8pt 'Manrope', sans-serif; text-transform:uppercase; letter-spacing:.08em; }
-  #project-notebook.print-entire .full-notebook-print h2 { color:#1d2b3a; font:500 25pt/1.1 'Space Grotesk', sans-serif; margin:0 0 6px; }
-  #project-notebook.print-entire .full-notebook-date { color:#9a714f; font:700 8pt 'Manrope', sans-serif; text-transform:uppercase; letter-spacing:.12em; margin:0 0 22px; }
-  #project-notebook.print-entire .full-notebook-print>div { break-inside:avoid; border-top:1px solid #d8d0c4; padding:12px 0; }
-  #project-notebook.print-entire .full-notebook-print>div span { color:#9a714f; font:700 8pt 'Manrope', sans-serif; text-transform:uppercase; letter-spacing:.08em; }
-  #project-notebook.print-entire .full-notebook-print>div p { margin:5px 0 0; font-size:10pt; }
+  #project-notebook.print-entire-notebook .print-notebook-heading, #project-notebook.print-entire-notebook .page-intro, #project-notebook.print-entire-notebook .summary-paper { display:none !important; }
+  #project-notebook.print-entire-notebook .full-notebook-print { display:block !important; }
+  #project-notebook.print-entire-notebook .full-notebook-print .print-branding { display:grid; gap:5px; margin-bottom:30px; padding:20px 0 18px; border-bottom:3px solid #1d2b3a; color:#1d2b3a; }
+  #project-notebook.print-entire-notebook .full-notebook-print .print-branding strong { font:600 20pt 'Space Grotesk', sans-serif; }
+  #project-notebook.print-entire-notebook .full-notebook-print .print-branding span, #project-notebook.print-entire-notebook .full-notebook-print .print-branding small { color:#9a714f; font:700 8pt 'Manrope', sans-serif; text-transform:uppercase; letter-spacing:.08em; }
+  #project-notebook.print-entire-notebook .full-notebook-print h2 { color:#1d2b3a; font:500 30pt/1.1 'Space Grotesk', sans-serif; margin:0 0 6px; }
+  #project-notebook.print-entire-notebook .full-notebook-subtitle { color:#68747b; font:400 12pt/1.5 'Manrope', sans-serif; margin:0 0 10px; }
+  #project-notebook.print-entire-notebook .full-notebook-date { color:#9a714f; font:700 8pt 'Manrope', sans-serif; text-transform:uppercase; letter-spacing:.12em; margin:0 0 22px; }
+  #project-notebook.print-entire-notebook .full-notebook-print>div { break-inside:avoid; border-top:1px solid #d8d0c4; padding:12px 0; }
+  #project-notebook.print-entire-notebook .full-notebook-print>div span { color:#9a714f; font:700 8pt 'Manrope', sans-serif; text-transform:uppercase; letter-spacing:.08em; }
+  #project-notebook.print-entire-notebook .full-notebook-print>div p { margin:5px 0 0; font-size:10pt; }
+  #project-notebook.print-entire-notebook .print-cta { margin-top:24px; padding:18px 20px !important; border:0 !important; background:#f5f0e8; display:grid; gap:4px; color:#1d2b3a; }
+  #project-notebook.print-entire-notebook .print-cta strong { font:600 15pt 'Space Grotesk', sans-serif; }
+  #project-notebook.print-entire-notebook .print-cta span, #project-notebook.print-entire-notebook .print-cta b { color:#9a714f; font:700 8pt 'Manrope', sans-serif; letter-spacing:.06em; }
   #project-notebook .notebook-layout, #project-notebook .notebook-stage { display:block; min-height:0; max-width:none; padding:0; }
   #project-notebook .page-intro { margin-bottom:1.2rem; }
   #project-notebook .page-intro h2 { font-size:28pt; }
