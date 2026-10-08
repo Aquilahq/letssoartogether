@@ -15,7 +15,7 @@ const Contact = () => {
     setError("");
     const data = new FormData(event.currentTarget);
     try {
-      const response = await fetch("/api/send-notebook", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: data.get("name"), company: data.get("company"), email: data.get("email"), message: data.get("message"), subject: "New project inquiry" }) });
+      const response = await fetch("/api/send-notebook", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: data.get("name"), company: data.get("company"), email: data.get("email"), message: data.get("message"), subject: "Let’s Soar Together | Contact Form" }) });
       const result = await response.json() as { ok?: boolean; error?: string };
       if (!response.ok || !result.ok) throw new Error(result.error || "Unable to send your message.");
       setSent(true);

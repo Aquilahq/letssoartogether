@@ -10,7 +10,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!context.env.RESEND_API_KEY) return json({ error: "Project submissions are not configured yet." }, 503);
     const submittedAt = new Date().toISOString();
     const text = ["WORK WITH AQUILA PROJECT SUBMISSION", `Submitted: ${submittedAt}`, `Source: /work-with-aquila`, "", `Name: ${name}`, `Email: ${email}`, `Phone: ${String(input.phone || "Not provided")}`, `Project: ${projectName}`, `Current stage: ${stage}`, "", "What they are building:", description, "", "Requested Aquila help:", requestedHelp, "", "Serious interest confirmed: yes"].join("\n").slice(0, 20000);
-    const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" }, body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: email, subject: `Work with Aquila: ${projectName}`, text }) });
+    const response = await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" }, body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: email, subject: `Work With Aquila | ${projectName}`, text }) });
     const result = await response.json() as { id?: string; message?: string };
     if (!response.ok || !result.id) return json({ error: result.message || "Unable to submit your project." }, 502);
     return json({ ok: true });

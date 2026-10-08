@@ -29,7 +29,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: input.email.trim(), subject: input.subject || `Project Notebook from ${input.name.trim()}`, text, html }),
+      body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: input.email.trim(), subject: input.subject || `Vision Lab | Project Notebook | ${input.name.trim()}`, text, html }),
     });
     const result = await response.json() as { id?: string; message?: string };
     if (!response.ok || !result.id) return json({ error: result.message || "Email delivery failed." }, 502);
