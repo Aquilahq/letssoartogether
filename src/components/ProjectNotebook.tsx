@@ -86,7 +86,7 @@ const pages = [
   { id: "why", label: "The why" }, { id: "problem", label: "The problem" },
   { id: "explore", label: "Explore" }, { id: "ideas", label: "Idea wall" },
   { id: "focus", label: "Find focus" }, { id: "vision", label: "Imagine it" },
-  { id: "next", label: "Next step" }, { id: "summary", label: "Summary" },
+  { id: "next", label: "Next step" }, { id: "summary", label: "Summary & Conclusion" },
 ];
 const paths = ["I just want help", "I want to dream and build", "I have an idea", "I want to start something", "I want to solve a problem", "I want to improve something", "I have several ideas", "I know what I want but don't know where to start", "I'm not sure yet. Help me brainstorm"];
 const styles = [
