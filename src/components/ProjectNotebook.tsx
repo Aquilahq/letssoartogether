@@ -103,11 +103,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
   const askPrompt = (action: string) => addQuestion(promptForAction(action));
   const clearInformation = () => {
     if (!window.confirm("Clear all written information from this notebook? This cannot be undone.")) return;
-    setBook((current) => ({
-      ...current,
-      brainDump: "", why: "", problem: "", who: "", current: "", vision: "",
-      partners: "", nextStep: "", when: "", perspective: "", change: "",
-    }));
+    setBook({ ...freshNotebook, path: [], styles: [], roadblocks: [], ideas: [], selected: [] });
     setPrompt("");
   };
   const pageIndex = pages.findIndex((item) => item.id === page);
@@ -166,7 +162,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
           {page === "summary" && <><Summary book={book} onShare={() => { setShowContact(true); }} onPrintEntire={printEntire} /><div className="mt-8 rounded-2xl border border-primary/20 bg-primary/5 p-5 text-center"><strong className="block font-display text-xl">Ready to build this with Aquila?</strong><a href="/work-with-aquila" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary">Explore Working With Aquila →</a></div></>}
           {showContact && <ContactPanel onClose={() => setShowContact(false)} book={book} />}
           {showStuckGuide && <StuckGuide onClose={() => setShowStuckGuide(false)} onSave={(note) => { update("brainDump", note); setShowStuckGuide(false); go("dump"); }} />}
-          {page !== "summary" && <div className="notebook-nav"><button onClick={back} disabled={pageIndex === 0}><ArrowLeft size={16} /> {pageIndex === 0 ? "Back" : `Back to ${pages[pageIndex - 1].label}`}</button><button className="stuck" onClick={stuck}><Sparkles size={15} /> I&apos;m stuck</button><button className="next-button" onClick={next}>{pageIndex === pages.length - 1 ? "Finish" : `Next: ${pages[pageIndex + 1].label}`}<ArrowRight size={16} /></button></div>}
+          {page !== "summary" && <div className="notebook-nav"><button onClick={back} disabled={pageIndex === 0}><ArrowLeft size={16} /> {pageIndex === 0 ? "Back" : `Back to ${pages[pageIndex - 1].label}`}</button><button className="stuck" onClick={stuck}><Sparkles size={15} /> I&apos;m stuck</button><button className="nav-clear clear-information" onClick={clearInformation} type="button"><Trash2 size={14} /> Clear information</button><button className="next-button" onClick={next}>{pageIndex === pages.length - 1 ? "Finish" : `Next: ${pages[pageIndex + 1].label}`}<ArrowRight size={16} /></button></div>}
         </main>
       </div>
     </div>
