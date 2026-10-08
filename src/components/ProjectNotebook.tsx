@@ -35,8 +35,9 @@ const notebookToHtml = (book: Notebook) => {
 };
 const notebookFromXml = (xml: string): Notebook => {
   const document = new DOMParser().parseFromString(xml, "application/xml");
-  if (document.querySelector("parsererror") || !document.documentElement.matches("discoveryJourney, visionLabFile")) throw new Error("That file is not a Vision Lab file.");
-  const root = document.documentElement;
+  const documentRoot = document.documentElement;
+  const root = ["discoveryJourney", "visionLabFile"].includes(documentRoot.localName) ? documentRoot : document.querySelector("discoveryJourney, visionLabFile");
+  if (document.querySelector("parsererror") || !root) throw new Error("That file is not a readable Vision Lab XML file.");
   const answers = root.querySelector("answers");
   const perspectiveAnswers = Object.fromEntries(Array.from(root.querySelectorAll("perspectiveAnswers > perspective")).map((item) => [item.getAttribute("name") || "Perspective", item.textContent || ""]));
   const ideas = Array.from(root.querySelectorAll("ideas > idea")).map((item, index) => ({ id: Date.now() + index, title: xmlValue(item, "title"), text: xmlValue(item, "text"), category: item.getAttribute("category") || "Explore this", favorite: false }));
