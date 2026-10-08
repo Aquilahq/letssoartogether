@@ -24,7 +24,12 @@ const cleanBrainDump = (value: string) => value
   .replace(/\\n(?:Answer|A):\\s*/g, "\n")
   .replace(/\\n/g, "\n");
 const xmlEscape = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&apos;");
-const xmlValue = (root: Element, selector: string) => root.querySelector(selector)?.textContent || "";
+const xmlElements = (root: Element, name: string) => Array.from(root.getElementsByTagName("*")).filter((element) => element.localName === name);
+const xmlValue = (root: Element, name: string) => xmlElements(root, name)[0]?.textContent || "";
+const xmlChildren = (root: Element, parentName: string, childName: string) => {
+  const parent = xmlElements(root, parentName)[0];
+  return parent ? Array.from(parent.children).filter((element) => element.localName === childName) : [];
+};
 const htmlEscape = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
 const notebookToHtml = (book: Notebook) => {
   const fields = [["My idea", book.brainDump], ["Why it matters", book.why], ["The problem", book.problem], ["Who it helps", book.who], ["Current state", book.current], ["Vision", book.vision], ["Partners", book.partners], ["Next step", book.nextStep], ["When", book.when]];
@@ -34,22 +39,22 @@ const notebookToHtml = (book: Notebook) => {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Let&apos;s Soar Together — Vision Lab</title><style>body{max-width:900px;margin:0 auto;padding:32px 20px 64px;background:#f7f4ef;color:#17202a;font:16px/1.6 Arial,sans-serif}header{border-bottom:4px solid #173f7a;padding:24px 0;margin-bottom:28px}h1{color:#173f7a}h2{font-size:1rem;color:#9a714f;text-transform:uppercase;letter-spacing:.08em}section{background:#fff;border:1px solid #e5ddd2;border-radius:12px;padding:10px 18px;margin:12px 0}footer{margin-top:30px;border-top:2px solid #d9a98c;padding-top:18px;color:#173f7a;font-weight:bold}@media print{section{break-inside:avoid}}</style></head><body><header style="position:relative"><img src="${new URL(aquilaLogo, window.location.origin).href}" alt="Aquila" style="position:absolute;top:20px;right:0;width:78px;height:78px;object-fit:contain;border-radius:12px"><h1>Let&apos;s Soar Together</h1><div>Discovery Journey · letssoartogether.com · hello@letssoartogether.com</div></header><h1>Vision Lab</h1>${fields.map(([title, value]) => card(title, value)).join("")}${Object.entries(book.perspectiveAnswers).map(([title, value]) => card(title, value)).join("")}<footer>Ready for the next step? · letssoartogether.com<br><a href="${emailLink}" style="display:inline-block;margin-top:14px;padding:10px 16px;border-radius:999px;background:#173f7a;color:#fff;text-decoration:none">Email this Vision Lab to hello@letssoartogether.com</a></footer></body></html>`;
 };
 const notebookFromXml = (xml: string): Notebook => {
-  const document = new DOMParser().parseFromString(xml, "application/xml");
-  const documentRoot = document.documentElement;
-  const root = ["discoveryJourney", "visionLabFile"].includes(documentRoot.localName) ? documentRoot : document.querySelector("discoveryJourney, visionLabFile");
-  if (document.querySelector("parsererror") || !root) throw new Error("That file is not a readable Vision Lab XML file.");
-  const answers = root.querySelector("answers");
-  const perspectiveAnswers = Object.fromEntries(Array.from(root.querySelectorAll("perspectiveAnswers > perspective")).map((item) => [item.getAttribute("name") || "Perspective", item.textContent || ""]));
-  const ideas = Array.from(root.querySelectorAll("ideas > idea")).map((item, index) => ({ id: Date.now() + index, title: xmlValue(item, "title"), text: xmlValue(item, "text"), category: item.getAttribute("category") || "Explore this", favorite: false }));
+  const parsed = new DOMParser().parseFromString(xml, "application/xml");
+  const root = parsed.documentElement;
+  const parserErrors = parsed.getElementsByTagName("parsererror");
+  if (parserErrors.length || !root || !["discoveryJourney", "visionLabFile"].includes(root.localName)) throw new Error("Please choose a Vision Lab XML file downloaded from this site.");
+  const answers = xmlElements(root, "answers")[0] || root;
+  const perspectiveAnswers = Object.fromEntries(xmlChildren(root, "perspectiveAnswers", "perspective").map((item) => [item.getAttribute("name") || "Perspective", item.textContent || ""]));
+  const ideas = xmlChildren(root, "ideas", "idea").map((item, index) => ({ id: Date.now() + index, title: xmlValue(item, "title"), text: xmlValue(item, "text"), category: item.getAttribute("category") || "Explore this", favorite: false }));
   return {
     ...freshNotebook,
-    brainDump: xmlValue(answers || root, "brainDump"), why: xmlValue(answers || root, "why"), problem: xmlValue(answers || root, "problem"),
-    who: xmlValue(answers || root, "who"), current: xmlValue(answers || root, "currentState"), vision: xmlValue(answers || root, "vision"),
-    partners: xmlValue(answers || root, "partners"), nextStep: xmlValue(answers || root, "nextStep"), when: xmlValue(answers || root, "when"),
+    brainDump: xmlValue(answers, "brainDump"), why: xmlValue(answers, "why"), problem: xmlValue(answers, "problem"),
+    who: xmlValue(answers, "who"), current: xmlValue(answers, "currentState"), vision: xmlValue(answers, "vision"),
+    partners: xmlValue(answers, "partners"), nextStep: xmlValue(answers, "nextStep"), when: xmlValue(answers, "when"),
     perspectiveAnswers, perspective: Object.keys(perspectiveAnswers)[0] || "", ideas,
-    path: Array.from(root.querySelectorAll("paths > item")).map((item) => item.textContent || ""),
-    styles: Array.from(root.querySelectorAll("thinkingStyles > item")).map((item) => item.textContent || ""),
-    roadblocks: Array.from(root.querySelectorAll("roadblocks > item")).map((item) => item.textContent || ""),
+    path: xmlChildren(root, "paths", "item").map((item) => item.textContent || ""),
+    styles: xmlChildren(root, "thinkingStyles", "item").map((item) => item.textContent || ""),
+    roadblocks: xmlChildren(root, "roadblocks", "item").map((item) => item.textContent || ""),
   };
 };
 const notebookToXml = (book: Notebook) => {
