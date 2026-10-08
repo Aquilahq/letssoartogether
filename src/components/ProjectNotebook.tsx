@@ -25,6 +25,14 @@ const cleanBrainDump = (value: string) => value
   .replace(/\\n/g, "\n");
 const xmlEscape = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&apos;");
 const xmlValue = (root: Element, selector: string) => root.querySelector(selector)?.textContent || "";
+const htmlEscape = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+const notebookToHtml = (book: Notebook) => {
+  const fields = [["My idea", book.brainDump], ["Why it matters", book.why], ["The problem", book.problem], ["Who it helps", book.who], ["Current state", book.current], ["Vision", book.vision], ["Partners", book.partners], ["Next step", book.nextStep], ["When", book.when]];
+  const card = (title: string, value: string) => `<section><h2>${htmlEscape(title)}</h2><p>${htmlEscape(value || "Not answered yet.")}</p></section>`;
+  const emailBody = fields.map(([title, value]) => `${title}: ${value || "Not answered yet."}`).concat(Object.entries(book.perspectiveAnswers).map(([title, value]) => `${title}: ${value}`)).join("\\n\\n");
+  const emailLink = `mailto:hello@letssoartogether.com?subject=${encodeURIComponent("My Let's Soar Together Vision Lab")}&body=${encodeURIComponent(emailBody)}`;
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Let&apos;s Soar Together — Vision Lab</title><style>body{max-width:900px;margin:0 auto;padding:32px 20px 64px;background:#f7f4ef;color:#17202a;font:16px/1.6 Arial,sans-serif}header{border-bottom:4px solid #173f7a;padding:24px 0;margin-bottom:28px}h1{color:#173f7a}h2{font-size:1rem;color:#9a714f;text-transform:uppercase;letter-spacing:.08em}section{background:#fff;border:1px solid #e5ddd2;border-radius:12px;padding:10px 18px;margin:12px 0}footer{margin-top:30px;border-top:2px solid #d9a98c;padding-top:18px;color:#173f7a;font-weight:bold}@media print{section{break-inside:avoid}}</style></head><body><header style="position:relative"><img src="${new URL(aquilaLogo, window.location.origin).href}" alt="Aquila" style="position:absolute;top:20px;right:0;width:78px;height:78px;object-fit:contain;border-radius:12px"><h1>Let&apos;s Soar Together</h1><div>Discovery Journey · letssoartogether.com · hello@letssoartogether.com</div></header><h1>Vision Lab</h1>${fields.map(([title, value]) => card(title, value)).join("")}${Object.entries(book.perspectiveAnswers).map(([title, value]) => card(title, value)).join("")}<footer>Ready for the next step? · letssoartogether.com<br><a href="${emailLink}" style="display:inline-block;margin-top:14px;padding:10px 16px;border-radius:999px;background:#173f7a;color:#fff;text-decoration:none">Email this Vision Lab to hello@letssoartogether.com</a></footer></body></html>`;
+};
 const notebookFromXml = (xml: string): Notebook => {
   const document = new DOMParser().parseFromString(xml, "application/xml");
   if (document.querySelector("parsererror") || !document.documentElement.matches("discoveryJourney, visionLabFile")) throw new Error("That file is not a Vision Lab file.");
@@ -182,7 +190,7 @@ const ProjectNotebook = ({ standalone = false }: { standalone?: boolean }) => {
     URL.revokeObjectURL(url);
   };
   const viewXml = () => {
-    const url = URL.createObjectURL(new Blob([notebookToXml(book)], { type: "application/xml;charset=utf-8" }));
+    const url = URL.createObjectURL(new Blob([notebookToHtml(book)], { type: "text/html;charset=utf-8" }));
     window.open(url, "_blank", "noopener,noreferrer");
     window.setTimeout(() => URL.revokeObjectURL(url), 60000);
   };
