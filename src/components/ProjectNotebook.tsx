@@ -49,6 +49,7 @@ const notebookToXml = (book: Notebook) => {
   const perspectives = Object.entries(book.perspectiveAnswers).flatMap(([name, answer]) => [`      <perspective name="${xmlEscape(name)}">${xmlEscape(answer)}</perspective>`]);
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
+    '<?xml-stylesheet type="text/xsl" href="https://letssoartogether.com/vision-lab.xsl"?>',
     '<discoveryJourney version="1.0">',
     '  <metadata>',
     '    <title>Let&apos;s Soar Together Discovery Journey</title>',
