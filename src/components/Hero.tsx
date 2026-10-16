@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Sparkles, Wand2 } from "lucide-react";
 import aquilaLogo from "@/assets/aquila-logo.jpg";
 
-interface HeroProps { heroImage: string }
+interface HeroProps { heroImage: string; desktopHeroImage: string }
 
 const taglines = [
   "Your business breakthrough starts here.",
@@ -24,8 +24,17 @@ const renderTagline = (text: string) => text.split(/(change|life)/gi).map((part,
   return part;
 });
 
-const Hero = ({ heroImage }: HeroProps) => {
+const Hero = ({ heroImage, desktopHeroImage }: HeroProps) => {
   const [tagline, setTagline] = useState(() => taglines[Math.floor(Math.random() * taglines.length)]);
+  const [desktopLayout, setDesktopLayout] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)");
+    const update = () => setDesktopLayout(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
   useEffect(() => {
     const timer = window.setInterval(() => setTagline((current) => {
       const next = taglines[(taglines.indexOf(current) + 1) % taglines.length];
@@ -36,9 +45,15 @@ const Hero = ({ heroImage }: HeroProps) => {
 
   return <section className="relative flex min-h-[88vh] items-center overflow-hidden pt-24">
     <div className="absolute inset-0 z-0" aria-hidden="true">
-      <motion.div animate={{ x: ["-50%", "0%"] }} transition={{ duration: 94, ease: "linear", repeat: Infinity }} className="absolute inset-y-0 left-0 flex h-full w-[200%] origin-center scale-[1.12]">
-        <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-80" />
-        <img src={heroImage} alt="" className="h-full w-1/2 flex-none object-cover opacity-80" />
+      <motion.div animate={desktopLayout ? { x: "0%" } : { x: ["-50%", "0%"] }} transition={desktopLayout ? { duration: 0 } : { duration: 94, ease: "linear", repeat: Infinity }} className="hero-panorama-track absolute inset-y-0 left-0 flex h-full w-[200%] origin-center scale-[1.12]">
+        <picture className="contents">
+          <source media="(min-width: 1024px) and (hover: hover) and (pointer: fine)" srcSet={desktopHeroImage} />
+          <img src={heroImage} alt="" className="hero-panorama h-full w-1/2 flex-none object-cover opacity-80" />
+        </picture>
+        <picture className="contents">
+          <source media="(min-width: 1024px) and (hover: hover) and (pointer: fine)" srcSet={desktopHeroImage} />
+          <img src={heroImage} alt="" className="hero-panorama h-full w-1/2 flex-none object-cover opacity-80" />
+        </picture>
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-b from-background/10 via-background/55 to-background" />
     </div>

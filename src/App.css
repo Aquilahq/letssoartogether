@@ -61,6 +61,23 @@ body.vision-lab-open { overflow:hidden; }
 .notebook-legal-footer { display:flex; flex-wrap:wrap; gap:.35rem 1rem; justify-content:center; margin:1rem auto 0; max-width:72rem; padding:1rem 1.25rem; color:hsl(var(--muted-foreground)); font-size:.8rem; text-align:center; }
 .notebook-legal-footer strong { color:hsl(var(--foreground)); }
 @media (max-width:640px) { .notebook-legal-footer { flex-direction:column; gap:.25rem; } }
+/* Keep laptop/desktop on the same continuous scroll geometry as tablet; soften the cloud joins. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .hero-panorama-track {
+    width: 100%;
+  }
+
+  .hero-panorama-track > picture:nth-child(2) {
+    display: none;
+  }
+
+  .hero-panorama {
+    width: 100%;
+    filter: blur(1.25px);
+    transform: scale(1.012);
+  }
+}
+
 @media print {
   @page { size:letter; margin:.65in; }
   body * { visibility:hidden !important; }

@@ -9,6 +9,7 @@ import Perspective from "../components/Perspective";
 import AboutFounder from "../components/AboutFounder";
 import Footer from "../components/Footer";
 import heroImage from "@/assets/hero-bg-panorama.jpg";
+import desktopHeroImage from "@/assets/hero-bg-desktop.jpg";
 
 const Index = () => {
   return (
@@ -16,7 +17,7 @@ const Index = () => {
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">Skip to content</a>
       <Navbar />
       <main id="main-content">
-      <Hero heroImage={heroImage} />
+      <Hero heroImage={heroImage} desktopHeroImage={desktopHeroImage} />
       <Brands />
       <Services />
       <Portfolio />
