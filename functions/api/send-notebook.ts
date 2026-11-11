@@ -1,4 +1,5 @@
-interface Env { RESEND_API_KEY: string; }
+import { emailSubmission, storeSubmission, type SubmissionDatabase } from "../submission-store.ts";
+interface Env { RESEND_API_KEY?: string; SOAR_SUBMISSIONS?: SubmissionDatabase; }
 
 const EMAIL_FROM = "Let's Soar Together <hello@letssoartogether.com>";
 const EMAIL_TO = "hello@letssoartogether.com";
@@ -16,7 +17,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const input = await context.request.json() as { name?: string; company?: string; email?: string; phone?: string; preferred?: string; message?: string; subject?: string; origin?: string; website?: string; notebook?: Record<string, unknown> };
     if (input.website?.trim()) return json({ ok: true });
     if (!input.name?.trim() || !input.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.email)) return json({ error: "Please provide a valid name and email." }, 400);
-    if (!context.env.RESEND_API_KEY) return json({ error: "Email delivery is not configured yet." }, 503);
+    if (!context.env.RESEND_API_KEY && !context.env.SOAR_SUBMISSIONS) return json({ error: "Submission storage is not configured yet." }, 503);
 
     const notebook = input.notebook || {};
     const origin = String(input.origin || "").trim();
@@ -30,13 +31,20 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ];
     const text = lines.join("\n").slice(0, 30000);
     const html = `<div style="font-family:Arial,sans-serif;line-height:1.6;white-space:pre-wrap">${text.replace(/[&<>]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[char] || char))}</div>`;
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: input.email.trim(), subject: `${input.subject || "Vision Lab | Project Notebook"} | From: ${originLabel} | ${input.name.trim()}`, text, html }),
+    const subject = `${input.subject || "Vision Lab | Project Notebook"} | From: ${originLabel} | ${input.name.trim()}`;
+    const database = context.env.SOAR_SUBMISSIONS;
+    const id = await storeSubmission(database, { form: originLabel, name: input.name.trim(), email: input.email.trim(), subject, body: text });
+    const delivered = await emailSubmission(database, id, async () => {
+      if (!context.env.RESEND_API_KEY) return false;
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST", signal: AbortSignal.timeout(10000),
+        headers: { Authorization: `Bearer ${context.env.RESEND_API_KEY}`, "content-type": "application/json" },
+        body: JSON.stringify({ to: [EMAIL_TO], from: EMAIL_FROM, reply_to: input.email.trim(), subject, text, html }),
+      });
+      const result = await response.json() as { id?: string };
+      return response.ok && Boolean(result.id);
     });
-    const result = await response.json() as { id?: string; message?: string };
-    if (!response.ok || !result.id) return json({ error: result.message || "Email delivery failed." }, 502);
+    if (!id && !delivered) return json({ error: "Unable to submit your form right now." }, 502);
     return json({ ok: true });
   } catch {
     return json({ error: "Unable to send the notebook right now." }, 500);
