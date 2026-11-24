@@ -8,6 +8,7 @@ const links = [
   { label: "Services", href: "#services" },
   { label: "Work", href: "#work" },
   { label: "Vision Lab", href: "#project-notebook" },
+  { label: "SOAR As You Go", href: "/soar-as-you-go" },
   { label: "Start", href: "/start" },
 ];
 const menuVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.35, staggerChildren: 0.08 } }, exit: { opacity: 0, transition: { duration: 0.25 } } };
