@@ -1,3 +1,4 @@
+import InstitutionalServices from "../components/InstitutionalServices";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Services from "../components/Services";
@@ -18,6 +19,7 @@ const Index = () => {
       <Navbar />
       <main id="main-content">
       <Hero heroImage={heroImage} desktopHeroImage={desktopHeroImage} />
+      <InstitutionalServices />
       <Brands />
       <Services />
       <Portfolio />
