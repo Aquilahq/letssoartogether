@@ -12,6 +12,7 @@ import StartPage from "./pages/StartPage";
 import Sagp from "./pages/Sagp";
 import SagpService from "./pages/SagpService";
 import WorkWithAquila from "./pages/WorkWithAquila";
+import Contracting from "./pages/Contracting";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/soar-as-you-go/black-friday-starter" element={<SagpService offer="starter"/>}/>
           <Route path="/soar-as-you-go/professional-service" element={<SagpService offer="professional"/>}/>
           <Route path="/work-with-aquila" element={<WorkWithAquila />} />
+          <Route path="/government-contracting" element={<Contracting />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
